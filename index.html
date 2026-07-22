@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Birria Express · Control de Restaurante</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Figtree:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F6EEDD; --bg-alt:#EFE1C3; --paper:#FFFCF5; --ink:#2B1B12; --ink-soft:#5B4636;
+  --brick:#A23A1B; --brick-dark:#7A2911; --ember:#D9832E; --corn:#E3B23C;
+  --cilantro:#4C7A3B; --cilantro-dark:#375B2B; --danger:#B3261E; --masa:#E8D2A0; --line:#DCC79E;
+  --shadow: 0 6px 18px rgba(90,45,15,.12); --radius: 14px;
+  font-family: 'Figtree', system-ui, sans-serif;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;height:100%;}
+body{background:radial-gradient(circle at 100% 0%, rgba(217,131,46,.10), transparent 40%), var(--bg); color:var(--ink); min-height:100vh; -webkit-font-smoothing:antialiased;}
+h1,h2,h3,h4{font-family:'Fraunces', serif; font-weight:600; margin:0 0 4px;}
+.mono{font-family:'IBM Plex Mono', monospace;}
+button{font-family:inherit; cursor:pointer;}
+input,select,textarea{font-family:inherit;}
+a{color:inherit;}
+::selection{background:var(--corn); color:var(--ink);}
+
+.btn{display:inline-flex; align-items:center; justify-content:center; gap:6px; padding:10px 16px; border-radius:10px; border:1.5px solid transparent; font-weight:600; font-size:14px; transition:.15s transform, .15s box-shadow, .15s background; background:var(--paper); color:var(--ink); border-color:var(--line);}
+.btn:hover{transform:translateY(-1px); box-shadow:var(--shadow);}
+.btn:active{transform:translateY(0);}
+.btn-primary{background:var(--brick); border-color:var(--brick); color:#fff;}
+.btn-primary:hover{background:var(--brick-dark);}
+.btn-success{background:var(--cilantro); border-color:var(--cilantro); color:#fff;}
+.btn-success:hover{background:var(--cilantro-dark);}
+.btn-warn{background:var(--corn); border-color:var(--corn); color:#3a2a06;}
+.btn-danger{background:transparent; border-color:var(--danger); color:var(--danger);}
+.btn-danger:hover{background:var(--danger); color:#fff;}
+.btn-ghost{background:transparent; border-color:transparent; color:var(--ink-soft);}
+.btn-sm{padding:6px 10px; font-size:12.5px; border-radius:8px;}
+.btn-block{width:100%;}
+.btn:disabled{opacity:.4; cursor:not-allowed; transform:none;}
+
+#loginScreen{min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px;}
+.login-card{width:100%; max-width:380px; background:var(--paper); border:1.5px solid var(--line); border-radius:20px; padding:36px 30px; box-shadow:var(--shadow); text-align:center;}
+.login-card .logo{width:64px; height:64px; border-radius:16px; background:var(--brick); color:#fff; display:flex; align-items:center; justify-content:center; font-size:30px; margin:0 auto 14px; box-shadow: inset 0 -6px 0 rgba(0,0,0,.15);}
+.field{text-align:left; margin-bottom:14px;}
+.field label{display:block; font-size:12.5px; font-weight:600; color:var(--ink-soft); margin-bottom:5px; text-transform:uppercase; letter-spacing:.04em;}
+.field input, .field select, .field textarea{width:100%; padding:11px 12px; border-radius:10px; border:1.5px solid var(--line); background:#fff; font-size:15px; color:var(--ink);}
+.field input:focus, .field select:focus, .field textarea:focus{outline:2px solid var(--ember); outline-offset:1px;}
+.login-error{color:var(--danger); font-size:13px; margin-bottom:10px; min-height:16px; font-weight:600;}
+
+.app-shell{display:flex; min-height:100vh;}
+.sidebar{width:220px; flex-shrink:0; background:var(--brick); color:#fdece0; padding:20px 14px; display:flex; flex-direction:column; gap:4px; position:sticky; top:0; height:100vh;}
+.sidebar .brand{display:flex; align-items:center; gap:10px; padding:6px 8px 20px;}
+.sidebar .brand .logo{width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:18px;}
+.navbtn{display:flex; align-items:center; gap:10px; padding:11px 12px; border-radius:10px; background:transparent; color:#fdece0e0; border:none; text-align:left; font-size:14.5px; font-weight:600;}
+.navbtn:hover{background:rgba(255,255,255,.10);}
+.navbtn.active{background:#fff; color:var(--brick-dark);}
+.sidebar-foot{margin-top:auto; display:flex; flex-direction:column; gap:6px; padding-top:10px; border-top:1px solid rgba(255,255,255,.15);}
+
+.main{flex:1; min-width:0; padding:22px 26px 90px; max-width:1180px;}
+.topbar{display:none;}
+.view-head{display:flex; align-items:flex-end; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-bottom:18px;}
+.card{background:var(--paper); border:1.5px solid var(--line); border-radius:var(--radius); padding:18px; box-shadow:var(--shadow);}
+.section-title{font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-soft); font-weight:700; margin-bottom:10px;}
+
+.badge{display:inline-flex; align-items:center; gap:5px; font-size:11.5px; font-weight:700; padding:4px 9px; border-radius:99px; text-transform:uppercase; letter-spacing:.02em; white-space:nowrap;}
+.badge::before{content:''; width:6px; height:6px; border-radius:50%; background:currentColor;}
+.badge-espera{background:#fbe4d8; color:#9a3d16;} .badge-proceso{background:#fbeecb; color:#8a6408;} .badge-listo{background:#e2f0da; color:#3a6b2b;} .badge-barra{background:#dcebf5; color:#1f5a80;} .badge-entregado{background:#dcdcdc; color:#555;}
+.badge-pagado{background:#e2f0da; color:#3a6b2b;} .badge-pendiente{background:#fbe0de; color:#a4241b;}
+
+.order-grid{display:grid; grid-template-columns: 1.3fr 1fr; gap:18px; align-items:start;}
+.prod-cats{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px;}
+.chip{padding:7px 14px; border-radius:99px; border:1.5px solid var(--line); background:#fff; font-size:13px; font-weight:600; color:var(--ink-soft);}
+.chip.active{background:var(--ink); border-color:var(--ink); color:#fff;}
+.prod-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(140px,1fr)); gap:10px;}
+.prod-tile{border:1.5px solid var(--line); background:#fff; border-radius:12px; padding:12px; text-align:left; transition:.12s;}
+.prod-tile:hover{border-color:var(--brick); transform:translateY(-2px); box-shadow:var(--shadow);}
+.prod-tile .pname{font-weight:700; font-size:14px; display:block;}
+.prod-tile .pdesc{font-size:11px; color:var(--ink-soft); display:block; margin-top:2px; line-height:1.2;}
+.cart-item{display:flex; align-items:flex-start; gap:8px; padding:10px 0; border-bottom:1px dashed var(--line);}
+.qty-ctrl{display:flex; align-items:center; gap:6px;}
+.qty-ctrl button{width:24px; height:24px; border-radius:6px; border:1.5px solid var(--line); background:#fff; font-weight:700;}
+.total-row{display:flex; justify-content:space-between; align-items:center; padding-top:12px; margin-top:8px; border-top:2px solid var(--ink); font-family:'Fraunces',serif;}
+.total-row span:last-child{font-size:22px; font-weight:700; color:var(--brick);}
+
+.ticket-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(260px,1fr)); gap:16px;}
+.ticket-card{background:var(--paper); border:1.5px solid var(--line); border-radius:12px; position:relative; overflow:hidden; box-shadow:var(--shadow);}
+.caja-grid{display:grid; grid-template-columns: 1fr 380px; gap:18px; align-items:start;}
+.caja-row{display:flex; justify-content:space-between; align-items:center; padding:14px 16px; border:1.5px solid var(--line); border-radius:12px; background:#fff; margin-bottom:10px; gap:10px; flex-wrap:wrap;}
+.split-row{display:flex; gap:8px; align-items:center; margin-bottom:8px;}
+.split-row input{flex:1;}
+
+table{width:100%; border-collapse:collapse; font-size:13.5px;}
+table th{text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:.04em; color:var(--ink-soft); padding:8px 10px; border-bottom:2px solid var(--ink);}
+table td{padding:10px 10px; border-bottom:1px solid var(--line); vertical-align:middle;}
+.table-wrap{overflow-x:auto;}
+
+.stat-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:14px; margin-bottom:18px;}
+.stat-card{background:var(--paper); border:1.5px solid var(--line); border-radius:14px; padding:16px; box-shadow:var(--shadow);}
+.stat-card .sval{font-family:'IBM Plex Mono',monospace; font-size:24px; font-weight:600; color:var(--brick); margin-top:4px;}
+
+.modal-overlay{position:fixed; inset:0; background:rgba(30,17,8,.45); display:flex; align-items:center; justify-content:center; z-index:100; padding:16px;}
+.modal{background:var(--paper); border-radius:18px; padding:24px; width:100%; max-width:460px; max-height:90vh; overflow:auto;}
+.modal-close{float:right; background:none; border:none; font-size:20px; color:var(--ink-soft);}
+.toast{position:fixed; bottom:24px; left:50%; transform:translateX(-50%); background:var(--ink); color:#fff; padding:12px 20px; border-radius:99px; font-size:13.5px; font-weight:600; box-shadow:var(--shadow); z-index:200; opacity:0; transition:.25s;}
+.toast.show{opacity:1; transform:translateX(-50%) translateY(-4px);}
+
+.loader-overlay{position:fixed; inset:0; background:var(--bg); z-index:999; display:flex; flex-direction:column; align-items:center; justify-content:center;}
+.spinner{width:40px; height:40px; border:4px solid var(--line); border-top-color:var(--brick); border-radius:50%; animation:spin 1s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.flex-between{display:flex; justify-content:space-between; align-items:center; gap:10px;}
+.empty-state{text-align:center; padding:50px 20px; color:var(--ink-soft);}
+.muted{color:var(--ink-soft);}
+
+@media (max-width:768px){
+  .sidebar{display:none;}
+  .app-shell{flex-direction:column;}
+  .topbar{display:flex; align-items:center; justify-content:space-between; gap:8px; background:var(--brick); color:#fff; padding:14px 16px;}
+  .main{padding:16px 14px 90px;}
+  .bottomnav{position:fixed; bottom:0; left:0; right:0; background:var(--paper); border-top:1.5px solid var(--line); display:flex; z-index:20; padding:6px 4px;}
+  .bottomnav button{flex:1; display:flex; flex-direction:column; align-items:center; background:none; border:none; font-size:10.5px; font-weight:700;}
+  .bottomnav button.active{color:var(--brick);}
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<div id="toast" class="toast"></div>
+
+<script>
+/* =========================================================================
+   CONFIGURACIÓN DE CONEXIÓN A GOOGLE SHEETS
+   ========================================================================= */
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwj-nsFoQaSg4frd2YAYK-B0kBVflZl3LRJrpAs3cEaMqZjVBs3f-S3f8-Wi187CUSZ/exec'; 
+const SESSION_KEY = 'birriaSession_v1';
+const DB_LOCAL_KEY = 'birriaCache_v1';
+let DB = null;
+let isSyncing = false;
+
+function todayKey(d=new Date()){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function isoWeekKey(d=new Date()){ const dt=new Date(d); const day=(dt.getDay()+6)%7; dt.setDate(dt.getDate()-day); return todayKey(dt); }
+function monthKey(d=new Date()){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'); }
+function money(n){ return '$'+(Number(n)||0).toLocaleString('es-MX',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function fmtDateTime(iso){ const d=new Date(iso); return d.toLocaleDateString('es-MX',{day:'2-digit',month:'short'})+' '+d.toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'}); }
+function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
+
+function getSession(){ try{ return JSON.parse(sessionStorage.getItem(SESSION_KEY)); }catch(e){ return null; } }
+function setSession(u){ sessionStorage.setItem(SESSION_KEY, JSON.stringify(u)); }
+
+function toast(msg){
+  const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+  clearTimeout(window.__toastTO); window.__toastTO=setTimeout(()=>t.classList.remove('show'), 2200);
+}
+
+// ----------------- Base de Datos ASYNC -----------------
+async function initDB() {
+  document.getElementById('root').innerHTML = `<div class="loader-overlay"><div class="spinner"></div><p style="margin-top:16px; font-weight:600;">Conectando con Google Sheets...</p></div>`;
+  try {
+    const res = await fetch(SCRIPT_URL);
+    const data = await res.json();
+    if(data) { DB = data; localStorage.setItem(DB_LOCAL_KEY, JSON.stringify(data)); }
+    else DB = seedDB();
+  } catch(e) {
+    const cached = localStorage.getItem(DB_LOCAL_KEY);
+    DB = cached ? JSON.parse(cached) : seedDB();
+    toast('Modo sin conexión detectado. Usando caché local.');
+  }
+  if(!DB.resets) DB.resets = { week: null, month: null };
+}
+
+async function syncDB() {
+  localStorage.setItem(DB_LOCAL_KEY, JSON.stringify(DB));
+  if(isSyncing) return;
+  isSyncing = true;
+  try {
+    await fetch(SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify(DB),
+      headers: {'Content-Type': 'text/plain;charset=utf-8'}
+    });
+  } catch(e) {
+    console.error('Error de sincronización con Sheets', e);
+  } finally {
+    isSyncing = false;
+  }
+}
+
+function seedDB(){
+  return {
+    counters:{order:1, user:2, product:1},
+    users:[{id:1, username:'Admin', password:'123', name:'Admin Local', role:'admin'}],
+    products:[], orders:[], history:[], closures:[], cash:{date:null, initial:null, openedBy:null}, resets:{week:null, month:null}
+  };
+}
+function nextId(key){ const n = DB.counters[key]||1; DB.counters[key]=n+1; return n; }
+
+async function logHistory(action, detail){
+  const s = getSession();
+  DB.history.unshift({id:uid(), ts:new Date().toISOString(), user:s?s.name:'—', role:s?s.role:'—', action, detail});
+  if(DB.history.length>1000) DB.history.length = 1000;
+  await syncDB();
+}
+
+const ROLE_LABEL = {admin:'Administrador', mesero:'Mesero', cocinero:'Cocinero', cajero:'Cajero'};
+const ROLE_VIEWS = { admin:['pedidos','cocina','caja','productos','corte','usuarios'], mesero:['pedidos'], cocinero:['cocina'], cajero:['caja'] };
+const VIEW_META = { pedidos:{label:'Pedidos', icon:'🧾'}, cocina:{label:'Cocina', icon:'🍳'}, caja:{label:'Caja', icon:'💵'}, productos:{label:'Productos', icon:'📦'}, corte:{label:'Corte', icon:'📊'}, usuarios:{label:'Usuarios', icon:'👤'} };
+
+let state = { view: null, cart: [], customer:'', generalNotes:'', prodFilter:'Todos', searchProd:'', cocinaFilter:'activos', cajaFilter:'pendientes', payDraft:null };
+
+// ----------------- BOOT -----------------
+async function boot(){
+  const s = getSession();
+  if(!s){ renderLogin(); return; }
+  await initDB();
+  renderShell();
+  // Pollings
+  setInterval(async () => {
+    if(!isSyncing && state.view !== 'caja') {
+        try { const res=await fetch(SCRIPT_URL); const data=await res.json(); if(data){ DB=data; renderView(); } }catch(e){}
+    }
+  }, 20000);
+}
+
+function renderLogin(){
+  document.getElementById('root').innerHTML = `
+  <div id="loginScreen">
+    <div class="login-card">
+      <div class="logo">🌶️</div><h1>Birria Express</h1>
+      <form id="loginForm" style="margin-top:20px;">
+        <div class="field"><label>Usuario</label><input type="text" id="loginUser" required></div>
+        <div class="field"><label>Contraseña</label><input type="password" id="loginPass" required></div>
+        <div class="login-error" id="loginError"></div>
+        <button class="btn btn-primary btn-block" type="submit">Entrar</button>
+      </form>
+    </div>
+  </div>`;
+  document.getElementById('loginForm').addEventListener('submit', async e=>{
+    e.preventDefault();
+    if(!DB) await initDB();
+    const u = document.getElementById('loginUser').value.trim(), p = document.getElementById('loginPass').value;
+    const user = DB.users.find(x=>x.username.toLowerCase()===u.toLowerCase() && x.password===p);
+    if(!user){ document.getElementById('loginError').textContent = 'Usuario o contraseña incorrectos.'; return; }
+    setSession({id:user.id, name:user.name, username:user.username, role:user.role});
+    await logHistory('Inicio de sesión', 'Entró al sistema');
+    boot();
+  });
+}
+
+function renderShell(){
+  const s = getSession();
+  const views = ROLE_VIEWS[s.role]||[];
+  if(!state.view || !views.includes(state.view)) state.view = views[0];
+  const navItems = views.map(v=>`<button class="navbtn ${state.view===v?'active':''}" onclick="goView('${v}')"><span class="ic">${VIEW_META[v].icon}</span> ${VIEW_META[v].label}</button>`).join('');
+  const bottomItems = views.map(v=>`<button class="${state.view===v?'active':''}" onclick="goView('${v}')"><span class="ic">${VIEW_META[v].icon}</span><br>${VIEW_META[v].label}</button>`).join('');
+
+  document.getElementById('root').innerHTML = `
+  <div class="app-shell">
+    <div class="sidebar">
+      <div class="brand"><div class="logo">🌶️</div><div><strong>Birria Express</strong></div></div>
+      ${navItems}
+      <div class="sidebar-foot"><button class="navbtn" onclick="doLogout()">🚪 Cerrar sesión</button></div>
+    </div>
+    <div style="flex:1; min-width:0; display:flex; flex-direction:column;">
+      <div class="topbar"><div class="brand">🌶️ Birria Express</div><button class="btn btn-sm" onclick="doLogout()">🚪</button></div>
+      <div class="main" id="mainView"></div>
+    </div>
+  </div>
+  <div class="bottomnav" style="display:none;" id="mobileNav">${bottomItems}</div>
+  `;
+  if(window.innerWidth<=768) document.getElementById('mobileNav').style.display='flex';
+  renderView();
+}
+function goView(v){ state.view = v; state.cart=[]; state.customer=''; state.generalNotes=''; renderShell(); }
+function doLogout(){ clearSession(); renderLogin(); }
+
+function renderView(){
+  const el = document.getElementById('mainView');
+  if(!el) return;
+  const v = state.view;
+  if(v==='pedidos') el.innerHTML = viewPedidos();
+  else if(v==='cocina') el.innerHTML = viewCocina();
+  else if(v==='caja') el.innerHTML = viewCaja();
+  else if(v==='productos') el.innerHTML = viewProductos();
+  else if(v==='corte') el.innerHTML = viewCorte();
+  else if(v==='usuarios') el.innerHTML = viewUsuarios();
+  if(v==='pedidos') renderCart();
+}
+
+// ======================= PEDIDOS =======================
+function viewPedidos(){
+  const cats = ['Todos', ...new Set(DB.products.map(p=>p.category))];
+  const chips = cats.map(c=>`<button class="chip ${state.prodFilter===c?'active':''}" onclick="state.prodFilter='${c}'; renderView();">${c}</button>`).join('');
+  const prods = DB.products.filter(p=> state.prodFilter==='Todos' || p.category===state.prodFilter);
+  const tiles = prods.map(p=>`<button class="prod-tile" onclick="addToCart(${p.id})"><span class="pname">${p.name}</span>${p.description?`<span class="pdesc">${p.description}</span>`:''}<span class="mono" style="color:var(--brick); margin-top:6px; display:block;">${money(p.price)}</span></button>`).join('');
+  
+  const s = getSession();
+  const enBarra = DB.orders.filter(o => o.waiterId === s.id && o.status === 'barra');
+  let barraHtml = '';
+  if(enBarra.length > 0){
+    barraHtml = `<div class="card" style="margin-bottom:18px; border:2px solid var(--cilantro); background:#f4fbf1;">
+      <h3 style="color:var(--cilantro-dark); margin-bottom:10px;">¡Tienes pedidos listos en Barra!</h3>
+      ${enBarra.map(o=>`<div class="caja-row" style="padding:10px;">
+        <div>Folio <b>${o.folio}</b> - Mesa/Cliente: ${o.customer}</div>
+        <button class="btn btn-success" onclick="setOrderStatus(${o.id}, 'entregado')">Marcar Entregado</button>
+      </div>`).join('')}
+    </div>`;
+  }
+
+  return `
+  ${barraHtml}
+  <div class="view-head"><div><h2>Comandas</h2><p>Levantar pedido y enviar a cocina.</p></div></div>
+  <div class="order-grid">
+    <div class="card"><div class="prod-cats">${chips}</div><div class="prod-grid">${tiles||'<div class="empty-state" style="grid-column:1/-1">Sin productos.</div>'}</div></div>
+    <div class="card">
+      <div class="section-title">Datos del pedido</div>
+      <div class="field"><label>Mesa / Cliente <span style="color:red">*Obligatorio</span></label><input type="text" id="custName" value="${state.customer}" oninput="state.customer=this.value"></div>
+      <div id="cartWrap"></div>
+      <div class="field" style="margin-top:10px;"><label>Notas generales</label><textarea id="genNotes" rows="2" oninput="state.generalNotes=this.value">${state.generalNotes}</textarea></div>
+      <button class="btn btn-primary btn-block" onclick="submitOrder()">Enviar a Cocina / Caja →</button>
+    </div>
+  </div>`;
+}
+
+function addToCart(pid){
+  const p = DB.products.find(x=>x.id===pid); if(!p) return;
+  const ex = state.cart.find(i=>i.productId===pid);
+  if(ex) ex.qty++; else state.cart.push({productId:pid, name:p.name, price:p.price, qty:1, notes:''});
+  renderCart();
+}
+function changeQty(pid, delta){
+  const i = state.cart.find(x=>x.productId===pid); if(!i) return;
+  i.qty += delta; if(i.qty<=0) state.cart = state.cart.filter(x=>x.productId!==pid);
+  renderCart();
+}
+function renderCart(){
+  const wrap = document.getElementById('cartWrap'); if(!wrap) return;
+  if(!state.cart.length){ wrap.innerHTML = `<div class="empty-state">Agrega productos del menú.</div>`; return; }
+  const items = state.cart.map(i=>`
+    <div class="cart-item">
+      <div style="flex:1;"><div style="font-weight:700;">${i.name}</div><input placeholder="Nota..." value="${i.notes}" oninput="state.cart.find(x=>x.productId==${i.productId}).notes=this.value" style="width:100%; border:none; background:var(--bg-alt); border-radius:6px; padding:4px; font-size:12px; margin-top:4px;"></div>
+      <div class="qty-ctrl"><button onclick="changeQty(${i.productId},-1)">−</button><span style="min-width:18px;text-align:center;">${i.qty}</span><button onclick="changeQty(${i.productId},1)">+</button></div>
+      <div class="mono" style="padding-left:10px;">${money(i.price*i.qty)}</div>
+    </div>`).join('');
+  wrap.innerHTML = items + `<div class="total-row"><span>Total</span><span>${money(state.cart.reduce((a,i)=>a+i.price*i.qty,0))}</span></div>`;
+}
+
+async function submitOrder(){
+  if(!state.customer.trim()){ toast('⚠️ El campo Mesa/Cliente es obligatorio'); document.getElementById('custName').focus(); return; }
+  if(!state.cart.length){ toast('Agrega al menos un producto'); return; }
+  
+  const s = getSession(), total = state.cart.reduce((a,i)=>a+i.price*i.qty,0);
+  const order = { id: nextId('order'), folio: 'B-'+String(DB.counters.order-1).padStart(4,'0'), customer: state.customer.trim(), items: state.cart.map(i=>({...i})), generalNotes: state.generalNotes.trim(), waiterId: s.id, waiterName: s.name, status:'espera', paymentStatus:'pendiente', payments:[], subtotal:total, discount:0, discountReason:'', tip:0, total, createdAt: new Date().toISOString() };
+  
+  DB.orders.unshift(order);
+  await logHistory('Pedido creado', `${order.folio} · ${order.customer} (por ${s.name})`);
+  state.cart=[]; state.customer=''; state.generalNotes='';
+  toast('Pedido enviado');
+  renderView();
+}
+
+// ======================= COCINA =======================
+const K_STEPS = ['espera','proceso','listo','barra','entregado'];
+const K_LABEL = {espera:'Espera', proceso:'En proceso', listo:'Listo', barra:'En barra', entregado:'Entregado'};
+function viewCocina(){
+  let orders = DB.orders.filter(o=> state.cocinaFilter==='activos' ? !['barra','entregado'].includes(o.status) : o.status!=='entregado');
+  orders.sort((a,b)=> new Date(a.createdAt)-new Date(b.createdAt));
+  const cards = orders.map(o=>{
+    const sIdx = K_STEPS.indexOf(o.status), nStep = K_STEPS[sIdx+1];
+    return `<div class="ticket-card">
+      <div style="padding:14px; border-bottom:1px dashed var(--line);">
+        <div class="flex-between"><span class="mono" style="font-weight:700; color:var(--brick)">${o.folio}</span><span class="badge badge-${o.status}">${K_LABEL[o.status]}</span></div>
+        <div class="muted" style="font-size:12px; margin-top:4px;">${o.customer} · Mesero: ${o.waiterName}</div>
+      </div>
+      <div style="padding:14px; font-size:13.5px;">
+        <ul style="list-style:none; padding:0; margin:0;">${o.items.map(i=>`<li style="padding:4px 0; border-bottom:1px solid #f0f0f0;"><b>${i.qty}x</b> ${i.name} <i class="muted">${i.notes}</i></li>`).join('')}</ul>
+        ${o.generalNotes?`<div style="margin-top:10px; background:var(--bg-alt); padding:8px; border-radius:6px; font-size:12px;">📝 ${o.generalNotes}</div>`:''}
+      </div>
+      <div style="padding:14px;">
+        ${sIdx>0 ? `<button class="btn btn-sm btn-ghost" onclick="setOrderStatus(${o.id}, '${K_STEPS[sIdx-1]}')">← Regresar</button>`:''}
+        ${nStep==='entregado' ? `<div class="muted">En barra. El mesero debe entregar.</div>` : (nStep ? `<button class="btn btn-sm btn-success btn-block" onclick="setOrderStatus(${o.id}, '${nStep}')">Avanzar a ${K_LABEL[nStep]} →</button>` : '')}
+      </div>
+    </div>`;
+  }).join('') || `<div class="empty-state">No hay pedidos pendientes.</div>`;
+
+  return `
+  <div class="view-head">
+    <div><h2>Cocina</h2></div>
+    <div class="prod-cats"><button class="chip ${state.cocinaFilter==='activos'?'active':''}" onclick="state.cocinaFilter='activos';renderView()">Cocina</button><button class="chip ${state.cocinaFilter==='todos'?'active':''}" onclick="state.cocinaFilter='todos';renderView()">Barra / Todos</button></div>
+  </div>
+  <div class="ticket-grid">${cards}</div>`;
+}
+
+async function setOrderStatus(id, status){
+  const o = DB.orders.find(x=>x.id===id); if(!o) return;
+  o.status = status;
+  await logHistory('Estatus Cocina', `${o.folio} → ${K_LABEL[status]}`);
+  renderView();
+}
+
+// ======================= CAJA =======================
+function viewCaja(){
+  let orders = DB.orders.filter(o=> state.cajaFilter==='pendientes' ? o.paymentStatus==='pendiente' : true);
+  orders.sort((a,b)=> new Date(b.createdAt)-new Date(a.createdAt));
+  const rows = orders.map(o=>`<div class="caja-row">
+      <div><b>${o.folio}</b> - ${o.customer}<br><span class="muted" style="font-size:12px;">Mesa: ${o.waiterName} · ${fmtDateTime(o.createdAt)}</span></div>
+      <div class="mono" style="font-size:16px; font-weight:700;">${money(o.total)}</div>
+      <div style="display:flex;gap:6px;">
+        <span class="badge badge-${o.paymentStatus}">${o.paymentStatus==='pagado'?'Pagado':'Pend.'}</span>
+        ${o.paymentStatus==='pendiente'?`<button class="btn btn-sm btn-primary" onclick="openPayModal(${o.id})">Cobrar</button>`:'<button class="btn btn-sm" onclick="printTicket('+o.id+')">Ticket</button>'}
+      </div>
+    </div>`).join('') || `<div class="empty-state">No hay cuentas.</div>`;
+
+  return `
+  <div class="view-head"><div><h2>Caja</h2></div>
+    <div class="prod-cats"><button class="chip ${state.cajaFilter==='pendientes'?'active':''}" onclick="state.cajaFilter='pendientes';renderView()">Pendientes</button><button class="chip ${state.cajaFilter==='todos'?'active':''}" onclick="state.cajaFilter='todos';renderView()">Todas</button></div>
+  </div>
+  <div class="caja-grid"><div>${rows}</div><div class="card"><div class="section-title">Resumen Hoy</div>${cajaResumenHTML()}</div></div>
+  <div id="modalHost"></div>`;
+}
+
+function cajaResumenHTML(){
+  const tk = todayKey();
+  const todays = DB.orders.filter(o=>o.paymentStatus==='pagado' && todayKey(new Date(o.paidAt))===tk);
+  const byM = {efectivo:0,tarjeta:0,transferencia:0};
+  todays.forEach(o=> o.payments.forEach(p=> byM[p.method]+= p.amount));
+  return `
+  <div class="stat-card" style="margin-bottom:10px;"><div class="slabel">Cobrado Hoy</div><div class="sval">${money(todays.reduce((a,o)=>a+o.total,0))}</div></div>
+  <table style="font-size:13px;">
+    <tr><td>Efectivo</td><td align="right" class="mono">${money(byM.efectivo)}</td></tr>
+    <tr><td>Tarjeta</td><td align="right" class="mono">${money(byM.tarjeta)}</td></tr>
+    <tr><td>Transf.</td><td align="right" class="mono">${money(byM.transferencia)}</td></tr>
+  </table>`;
+}
+
+function openPayModal(oid){
+  const o = DB.orders.find(x=>x.id===oid);
+  state.payDraft = { id:oid, subtotal:o.subtotal||o.total, discount:0, discountReason:'', tip:0, splits:[{method:'efectivo', amount:o.subtotal||o.total}] };
+  renderPayModal();
+}
+function renderPayModal(){
+  const d = state.payDraft; if(!d) return;
+  const o = DB.orders.find(x=>x.id===d.id);
+  const tip = parseFloat(d.tip)||0, disc = parseFloat(d.discount)||0;
+  const totalPay = d.subtotal - disc + tip;
+  const paid = d.splits.reduce((a,s)=>a+(parseFloat(s.amount)||0),0);
+  const remaining = +(totalPay - paid).toFixed(2);
+
+  document.getElementById('modalHost').innerHTML = `
+  <div class="modal-overlay" onclick="if(event.target===this){state.payDraft=null;renderView()}">
+    <div class="modal">
+      <button class="modal-close" onclick="state.payDraft=null;renderView()">✕</button>
+      <h2>Cobrar ${o.folio}</h2>
+      <div style="background:var(--bg-alt); padding:10px; border-radius:8px; margin-bottom:14px;">
+        <div class="flex-between"><span>Subtotal (Consumo)</span><span class="mono">${money(d.subtotal)}</span></div>
+        <div class="flex-between" style="margin-top:6px;">
+          <span>Propina +</span>
+          <input type="number" step="any" inputmode="decimal" style="width:100px; padding:4px;" value="${d.tip}" oninput="state.payDraft.tip=this.value; renderPayModal()">
+        </div>
+        <div class="flex-between" style="margin-top:6px;">
+          <span>Descuento -</span>
+          <div style="display:flex; gap:4px;"><input type="text" placeholder="Motivo..." style="width:120px; padding:4px;" value="${d.discountReason}" oninput="state.payDraft.discountReason=this.value"><input type="number" step="any" inputmode="decimal" style="width:80px; padding:4px;" value="${d.discount}" oninput="state.payDraft.discount=this.value; renderPayModal()"></div>
+        </div>
+        <div class="flex-between" style="margin-top:8px; border-top:1px solid #ccc; padding-top:8px; font-weight:bold; font-size:16px;"><span>Total a cobrar</span><span class="mono">${money(totalPay)}</span></div>
+      </div>
+      
+      <div class="section-title">Formas de pago</div>
+      ${d.splits.map((s,i)=>`
+        <div class="split-row">
+          <select onchange="state.payDraft.splits[${i}].method=this.value; renderPayModal()">
+            <option value="efectivo" ${s.method==='efectivo'?'selected':''}>Efectivo</option><option value="tarjeta" ${s.method==='tarjeta'?'selected':''}>Tarjeta</option><option value="transferencia" ${s.method==='transferencia'?'selected':''}>Transferencia</option>
+          </select>
+          <input type="text" inputmode="decimal" placeholder="Monto" value="${s.amount}" oninput="state.payDraft.splits[${i}].amount=this.value; renderPayModal()">
+          ${d.splits.length>1?`<button class="btn btn-sm btn-danger" onclick="state.payDraft.splits.splice(${i},1); renderPayModal()">✕</button>`:''}
+        </div>`).join('')}
+      <button class="btn btn-sm" onclick="state.payDraft.splits.push({method:'efectivo',amount:0}); renderPayModal()">+ Agregar otra forma</button>
+      
+      <div class="total-row" style="margin-top:16px;"><span>${remaining===0?'Cuenta saldada':(remaining>0?'Falta por cobrar':'Cambio a devolver')}</span><span style="color:${remaining===0?'var(--cilantro)':'var(--brick)'}">${money(Math.abs(remaining))}</span></div>
+      <button class="btn btn-primary btn-block" style="margin-top:14px;" ${remaining>0.01?'disabled':''} onclick="confirmPayment()">Confirmar cobro</button>
+    </div>
+  </div>`;
+}
+
+async function confirmPayment(){
+  const d = state.payDraft, o = DB.orders.find(x=>x.id===d.id);
+  const totalPay = d.subtotal - (parseFloat(d.discount)||0) + (parseFloat(d.tip)||0);
+  o.paymentStatus='pagado'; o.paidAt = new Date().toISOString(); o.paidBy = getSession().name;
+  o.discount = parseFloat(d.discount)||0; o.discountReason = d.discountReason; o.tip = parseFloat(d.tip)||0; o.total = totalPay;
+  o.payments = d.splits.map(s=>({method:s.method, amount:parseFloat(s.amount)||0}));
+  
+  await logHistory('Cobro realizado', `${o.folio} · ${money(o.total)}`);
+  state.payDraft=null; renderView(); toast('Pago registrado'); printTicket(o.id);
+}
+
+function printTicket(oid){
+  const o = DB.orders.find(x=>x.id===oid);
+  const w = window.open('','_blank','width=380,height=600'); if(!w) return;
+  w.document.write(`<html><head><title>Ticket</title><style>body{font-family:monospace;font-size:13px;} hr{border:none;border-top:1px dashed #999;} .r{text-align:right;} .f{display:flex;justify-content:space-between;}</style></head><body>
+  <h2 style="text-align:center;">Birria Express</h2><div align="center">${o.folio} · ${fmtDateTime(o.createdAt)}</div>
+  <hr>Cliente: ${o.customer}<br>Le atendió: ${o.waiterName}<hr>
+  ${o.items.map(i=>`<div class="f"><span>${i.qty}x ${i.name}</span><span>${money(i.price*i.qty)}</span></div>`).join('')}
+  <hr>
+  <div class="f">Subtotal<span>${money(o.subtotal||o.total)}</span></div>
+  ${o.discount? `<div class="f">Descuento (${o.discountReason})<span>-${money(o.discount)}</span></div>`:''}
+  ${o.tip? `<div class="f">Propina<span>+${money(o.tip)}</span></div>`:''}
+  <div class="f" style="font-weight:bold; font-size:15px; margin-top:5px;">TOTAL<span>${money(o.total)}</span></div>
+  <hr>${o.payments.map(p=>`<div class="f">Pago en ${p.method}<span>${money(p.amount)}</span></div>`).join('')}
+  <div align="center" style="margin-top:15px;">¡Gracias por su preferencia!</div>
+  <script>window.onload=()=>window.print();<\/script></body></html>`); w.document.close();
+}
+
+// ======================= PRODUCTOS =======================
+function viewProductos(){
+  return `
+  <div class="view-head"><div><h2>Productos</h2></div><button class="btn btn-primary" onclick="openProductModal()">+ Nuevo</button></div>
+  <div class="card" style="margin-bottom:14px;"><input type="text" placeholder="🔍 Buscar por nombre o categoría..." style="width:100%; padding:10px; border-radius:8px; border:1px solid #ccc;" oninput="renderTableProd(this.value)"></div>
+  <div class="card table-wrap">
+    <table><thead><tr><th>Nombre y Desc</th><th>Categoría</th><th>Precio</th><th></th></tr></thead><tbody id="pTbody"></tbody></table>
+  </div>
+  <div id="modalHost"></div>`;
+}
+
+function renderTableProd(filterText=''){
+  const tb = document.getElementById('pTbody'); if(!tb) return;
+  const f = filterText.toLowerCase();
+  const prods = DB.products.filter(p=> p.name.toLowerCase().includes(f) || p.category.toLowerCase().includes(f));
+  tb.innerHTML = prods.map(p=>`<tr>
+    <td><b>${p.name}</b><br><span class="muted" style="font-size:11px;">${p.description||''}</span></td>
+    <td>${p.category}</td><td class="mono">${money(p.price)}</td>
+    <td align="right"><button class="btn btn-sm" onclick="openProductModal(${p.id})">Editar</button> <button class="btn btn-sm btn-danger" onclick="deleteProduct(${p.id})">✕</button></td>
+  </tr>`).join('') || `<tr><td colspan="4" class="empty-state">No se encontraron productos.</td></tr>`;
+}
+// Llamar a render despues de cargar la vista
+const _viewProductos = viewProductos;
+viewProductos = function(){ setTimeout(()=>renderTableProd(''), 10); return _viewProductos(); };
+
+function openProductModal(pid){
+  const p = pid ? DB.products.find(x=>x.id===pid) : {name:'', description:'', category:'', price:''};
+  document.getElementById('modalHost').innerHTML = `
+  <div class="modal-overlay" onclick="if(event.target===this){document.getElementById('modalHost').innerHTML=''}">
+    <div class="modal"><button class="modal-close" onclick="document.getElementById('modalHost').innerHTML=''">✕</button>
+      <h2>${pid?'Editar':'Nuevo'} Producto</h2>
+      <div class="field"><label>Nombre</label><input id="pfName" value="${p.name}"></div>
+      <div class="field"><label>Descripción</label><textarea id="pfDesc" rows="2">${p.description||''}</textarea></div>
+      <div class="field"><label>Categoría</label><input id="pfCat" value="${p.category}"></div>
+      <div class="field"><label>Precio</label><input id="pfPrice" type="number" step="any" inputmode="decimal" value="${p.price}"></div>
+      <button class="btn btn-primary btn-block" onclick="saveProduct(${pid||'null'})">Guardar</button>
+    </div>
+  </div>`;
+}
+async function saveProduct(pid){
+  const name = document.getElementById('pfName').value.trim();
+  const desc = document.getElementById('pfDesc').value.trim();
+  const cat = document.getElementById('pfCat').value.trim() || 'Otros';
+  const price = parseFloat(document.getElementById('pfPrice').value)||0;
+  if(!name){ toast('Falta nombre'); return; }
+  
+  if(pid){ Object.assign(DB.products.find(x=>x.id===pid), {name, description:desc, category:cat, price}); }
+  else { DB.products.push({id:nextId('product'), name, description:desc, category:cat, price}); }
+  
+  await logHistory('Catálogo', (pid?'Edición':'Alta')+' producto '+name);
+  document.getElementById('modalHost').innerHTML=''; renderView(); toast('Guardado');
+}
+async function deleteProduct(pid){
+  if(confirm('¿Eliminar producto?')){
+    DB.products = DB.products.filter(x=>x.id!==pid);
+    await logHistory('Catálogo', 'Eliminó producto ID '+pid); renderView();
+  }
+}
+
+// ======================= CORTE =======================
+function getSales(startISO){
+  const valid = DB.orders.filter(o=>o.paymentStatus==='pagado' && o.paidAt >= startISO);
+  const byM = {efectivo:0,tarjeta:0,transferencia:0};
+  valid.forEach(o=>o.payments.forEach(p=>byM[p.method]+=p.amount));
+  return { count:valid.length, total:valid.reduce((a,o)=>a+o.total,0), byM };
+}
+function getSalesByDateFn(filterFn, sinceDate){
+  const valid = DB.orders.filter(o=>o.paymentStatus==='pagado' && filterFn(new Date(o.paidAt)) && (!sinceDate || o.paidAt >= sinceDate));
+  return valid.reduce((a,o)=>a+o.total,0);
+}
+
+function viewCorte(){
+  const tk = todayKey();
+  const dayS = getSales(new Date(tk+'T00:00:00').toISOString());
+  const wSale = getSalesByDateFn(d=>isoWeekKey(d)===isoWeekKey(), DB.resets.week);
+  const mSale = getSalesByDateFn(d=>monthKey(d)===monthKey(), DB.resets.month);
+  
+  const cashOpen = DB.cash.date===tk;
+  const initial = Number(DB.cash.initial)||0;
+  const expectedEnd = initial + dayS.byM.efectivo;
+
+  return `
+  <div class="view-head"><div><h2>Corte y Finanzas</h2></div></div>
+  <div class="card" style="margin-bottom:18px;">
+    <div class="section-title">Caja del Día (Efectivo)</div>
+    ${cashOpen? `
+      <div class="stat-grid">
+        <div class="stat-card"><div class="slabel">Fondo Inicial</div><div class="sval">${money(initial)}</div></div>
+        <div class="stat-card"><div class="slabel">Ingreso Efectivo</div><div class="sval">${money(dayS.byM.efectivo)}</div></div>
+        <div class="stat-card" style="border-color:var(--corn); background:#fffcf0;"><div class="slabel">Caja Final (Debería Haber)</div><div class="sval">${money(expectedEnd)}</div></div>
+      </div>
+      <button class="btn btn-primary" onclick="abrirModalCorte()">Cerrar Caja / Realizar Corte</button>
+    ` : `
+      <div class="field" style="max-width:250px;"><label>Fondo de Caja Inicial</label><input type="number" id="initCash" value="0"></div>
+      <button class="btn btn-primary" onclick="abrirCaja()">Abrir Caja</button>
+    `}
+  </div>
+  
+  <div class="stat-grid">
+    <div class="stat-card"><div class="slabel">Venta Hoy Total</div><div class="sval">${money(dayS.total)}</div><div class="muted">Desglose: Tarj ${money(dayS.byM.tarjeta)} / Transf ${money(dayS.byM.transferencia)}</div></div>
+    <div class="stat-card"><div class="flex-between"><div class="slabel">Venta Semana</div><button class="btn btn-sm btn-ghost" onclick="resetSale('week')">🔄 Reiniciar</button></div><div class="sval">${money(wSale)}</div></div>
+    <div class="stat-card"><div class="flex-between"><div class="slabel">Venta Mes</div><button class="btn btn-sm btn-ghost" onclick="resetSale('month')">🔄 Reiniciar</button></div><div class="sval">${money(mSale)}</div></div>
+  </div>
+  
+  <div class="card table-wrap"><div class="section-title">Histórico de Cortes</div>
+    <table><thead><tr><th>Fecha</th><th>Inicial</th><th>Física Final</th><th>Diferencia</th><th>Venta Total</th></tr></thead>
+    <tbody>${DB.closures.slice().reverse().map(c=>`<tr><td>${c.date}</td><td class="mono">${money(c.initialCash)}</td><td class="mono">${money(c.actualCash)}</td><td style="color:${c.diff<0?'var(--danger)':(c.diff>0?'var(--cilantro)':'inherit')}"><b>${money(c.diff)}</b></td><td class="mono">${money(c.totalSales)}</td></tr>`).join('') || `<tr><td colspan="5">Sin cortes</td></tr>`}</tbody></table>
+  </div>
+  <div id="modalHost"></div>`;
+}
+
+async function abrirCaja(){
+  const v = parseFloat(document.getElementById('initCash').value)||0;
+  DB.cash = {date:todayKey(), initial:v, openedBy:getSession().name};
+  await logHistory('Caja', 'Abrió caja con '+money(v)); renderView(); toast('Caja Abierta');
+}
+async function resetSale(type){
+  if(confirm('¿Reiniciar el contador de '+(type==='week'?'la semana':'el mes')+'?')) {
+    DB.resets[type] = new Date().toISOString(); await syncDB(); renderView();
+  }
+}
+
+function abrirModalCorte(){
+  const tk = todayKey(); const dayS = getSales(new Date(tk+'T00:00:00').toISOString());
+  const expectedEnd = (Number(DB.cash.initial)||0) + dayS.byM.efectivo;
+  
+  document.getElementById('modalHost').innerHTML = `
+  <div class="modal-overlay" onclick="if(event.target===this){document.getElementById('modalHost').innerHTML=''}">
+    <div class="modal">
+      <h2>Cierre de Caja</h2>
+      <p>Total calculado en efectivo: <b>${money(expectedEnd)}</b></p>
+      <div class="field"><label>¿Cuánto efectivo físico hay realmente en la caja?</label><input type="number" id="realCash" step="any" inputmode="decimal" value="${expectedEnd}" oninput="calcDiffCorte(${expectedEnd}, this.value)"></div>
+      <div id="diffRes" style="margin-bottom:14px; font-weight:bold;">Diferencia: ${money(0)} (Cuadra exacto)</div>
+      <button class="btn btn-primary btn-block" onclick="ejecutarCorte(${expectedEnd})">Confirmar y Cerrar Caja</button>
+      <button class="btn btn-ghost btn-block" style="margin-top:6px;" onclick="document.getElementById('modalHost').innerHTML=''">Cancelar</button>
+    </div>
+  </div>`;
+}
+function calcDiffCorte(expected, realStr){
+  const real = parseFloat(realStr)||0; const diff = real - expected;
+  const res = document.getElementById('diffRes');
+  if(Math.abs(diff)<0.01) res.innerHTML = `<span style="color:var(--cilantro)">Cuadra exacto (${money(0)})</span>`;
+  else if(diff>0) res.innerHTML = `<span style="color:var(--cilantro)">Sobra efectivo: +${money(diff)}</span>`;
+  else res.innerHTML = `<span style="color:var(--danger)">Falta efectivo: ${money(diff)}</span>`;
+}
+async function ejecutarCorte(expectedEnd){
+  const real = parseFloat(document.getElementById('realCash').value)||0;
+  const diff = real - expectedEnd;
+  const tk = todayKey(); const dayS = getSales(new Date(tk+'T00:00:00').toISOString());
+  
+  DB.closures.push({ id:uid(), date:tk, initialCash:DB.cash.initial, finalCash:expectedEnd, actualCash:real, diff, totalSales:dayS.total, byMethod:dayS.byM, closedBy:getSession().name, ts:new Date().toISOString() });
+  DB.cash = {date:null, initial:null, openedBy:null};
+  await logHistory('Corte Realizado', `Físico: ${money(real)} / Diferencia: ${money(diff)}`);
+  document.getElementById('modalHost').innerHTML=''; renderView(); toast('Corte Guardado');
+}
+
+// ======================= USUARIOS =======================
+function viewUsuarios(){
+  return `
+  <div class="view-head"><div><h2>Usuarios</h2></div><button class="btn btn-primary" onclick="openUserModal()">+ Nuevo</button></div>
+  <div class="card table-wrap" style="margin-bottom:18px;">
+    <table><thead><tr><th>Nombre</th><th>Usuario</th><th>Rol</th><th></th></tr></thead>
+    <tbody>${DB.users.map(u=>`<tr><td>${u.name}</td><td>${u.username}</td><td><span class="badge badge-${u.role}">${ROLE_LABEL[u.role]}</span></td><td align="right"><button class="btn btn-sm" onclick="verHistorialUsuario('${u.username}')">Historial</button> <button class="btn btn-sm" onclick="openUserModal(${u.id})">Editar</button></td></tr>`).join('')}</tbody></table>
+  </div>
+  <div id="modalHost"></div>`;
+}
+function verHistorialUsuario(uname){
+  const hist = DB.history.filter(h=>h.user.includes(uname)).slice(0,50).map(h=>`<div style="padding:10px 0; border-bottom:1px solid #eee; font-size:13px;"><div class="muted mono" style="font-size:11px;">${fmtDateTime(h.ts)}</div><b>${h.action}</b>: ${h.detail}</div>`).join('') || '<div class="empty-state">Sin actividad reciente.</div>';
+  document.getElementById('modalHost').innerHTML = `<div class="modal-overlay" onclick="if(event.target===this){document.getElementById('modalHost').innerHTML=''}"><div class="modal"><button class="modal-close" onclick="document.getElementById('modalHost').innerHTML=''">✕</button><h2>Historial: ${uname}</h2><div style="max-height:60vh;overflow-y:auto; margin-top:10px;">${hist}</div></div></div>`;
+}
+function openUserModal(uidNum){
+  const u = uidNum ? DB.users.find(x=>x.id===uidNum) : {name:'', username:'', password:'', role:'mesero'};
+  document.getElementById('modalHost').innerHTML = `
+  <div class="modal-overlay" onclick="if(event.target===this){document.getElementById('modalHost').innerHTML=''}">
+    <div class="modal"><button class="modal-close" onclick="document.getElementById('modalHost').innerHTML=''">✕</button>
+      <h2>${uidNum?'Editar':'Nuevo'} Usuario</h2>
+      <div class="field"><label>Nombre</label><input id="ufName" value="${u.name}"></div>
+      <div class="field"><label>Usuario (Login)</label><input id="ufUser" value="${u.username}"></div>
+      <div class="field"><label>Contraseña</label><input type="text" id="ufPass" value="${u.password}"></div>
+      <div class="field"><label>Rol</label><select id="ufRole">${Object.keys(ROLE_LABEL).map(r=>`<option value="${r}" ${u.role===r?'selected':''}>${ROLE_LABEL[r]}</option>`).join('')}</select></div>
+      <button class="btn btn-primary btn-block" onclick="saveUser(${uidNum||'null'})">Guardar</button>
+    </div>
+  </div>`;
+}
+async function saveUser(uidNum){
+  const name=document.getElementById('ufName').value.trim(), username=document.getElementById('ufUser').value.trim(), password=document.getElementById('ufPass').value.trim(), role=document.getElementById('ufRole').value;
+  if(!name||!username||!password){ toast('Completa los campos'); return; }
+  
+  if(uidNum){ Object.assign(DB.users.find(x=>x.id===uidNum), {name,username,password,role}); }
+  else { DB.users.push({id:nextId('user'), name, username, password, role}); }
+  await logHistory('Usuarios', 'Guardó usuario '+username);
+  document.getElementById('modalHost').innerHTML=''; renderView(); toast('Usuario Guardado');
+}
+
+boot();
+</script>
+</body>
+</html>
