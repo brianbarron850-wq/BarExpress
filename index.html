@@ -176,7 +176,7 @@ tr:hover td{background:rgba(139,92,246,.04)}
 .cbox p{font-size:14px;color:var(--muted);margin-bottom:20px}
 .cacts{display:flex;gap:10px;justify-content:center}
 /* ── ORDERS ── */
-.order-layout{display:grid;grid-template-columns:1fr 380px;gap:20px;align-items:start}
+.order-layout{display:grid;grid-template-columns:1fr 380px;gap:20px;align-items:start;height:calc(100vh - 90px);overflow:hidden}
 .prod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:9px}
 .pb{background:rgba(255,255,255,.03);border:2px solid var(--border);border-radius:var(--rs);
   padding:13px 10px;text-align:center;cursor:pointer;transition:all .18s;font-family:inherit;color:var(--text)}
@@ -280,7 +280,7 @@ tr:hover td{background:rgba(139,92,246,.04)}
 .pflt{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;align-items:flex-end}
 .pflt .fc{max-width:220px}
 /* ── RESPONSIVE ── */
-@media(max-width:960px){.order-layout{grid-template-columns:1fr}.cslayout{grid-template-columns:1fr}.g3{grid-template-columns:1fr 1fr}.g4{grid-template-columns:1fr 1fr}}
+@media(max-width:960px){.order-layout{grid-template-columns:1fr;height:auto;overflow:visible}.cslayout{grid-template-columns:1fr}.g3{grid-template-columns:1fr 1fr}.g4{grid-template-columns:1fr 1fr}}
 @media(max-width:768px){.sb{transform:translateX(-100%)}.sb.open{transform:translateX(0)}.main{margin-left:0}.hbg{display:block}.content{padding:14px}.g2{grid-template-columns:1fr}.g3{grid-template-columns:1fr}.g4{grid-template-columns:1fr 1fr}.kgrid{grid-template-columns:1fr}.cmeths{grid-template-columns:1fr 1fr}}
 @media(max-width:480px){.g4{grid-template-columns:1fr}.cmeths{grid-template-columns:1fr}.modal{max-width:100%}.mov{align-items:flex-end;padding:0}.modal{border-radius:var(--r) var(--r) 0 0;max-height:95vh}}
 @media print{.sb,.topbar,.hbg,.btn,#notif-box{display:none!important}body{background:#fff}.ticket{border:none}}
@@ -515,7 +515,7 @@ async function loadFromGAS() {
       if(data.orders) localStorage.setItem('bar_orders', JSON.stringify(data.orders));
       if(data.cuts) localStorage.setItem('bar_cuts', JSON.stringify(data.cuts));
       if(data.sd) localStorage.setItem('bar_sd', JSON.stringify(data.sd));
-      if(data.sw) localStorage.setItem('bar_sw', JSON.stringify(data.sm));
+      if(data.sw) localStorage.setItem('bar_sw', JSON.stringify(data.sw));
       if(data.sm) localStorage.setItem('bar_sm', JSON.stringify(data.sm));
     }
     initData(); // Asegurar defaults si DB está vacía
@@ -713,35 +713,35 @@ function rOrders(c){
   }
   c.innerHTML=`${barHtml}
   <div class="order-layout">
-    <div style="height: calc(100vh - 120px); display: flex; flex-direction: column; position: sticky; top: 80px;">
-      <div class="card" style="margin-bottom:16px; flex-shrink: 0;">
+    <div style="display:flex;flex-direction:column;height:100%;overflow:hidden">
+      <div class="card" style="margin-bottom:16px;flex-shrink:0">
         <div class="ch"><div class="ct">🍹 Nueva Comanda</div>
           ${editingOid?`<span style="font-size:12px;background:rgba(59,130,246,.2);color:#93C5FD;padding:4px 10px;border-radius:20px;font-weight:700">✏️ MODO EDICIÓN</span>`:''}
         </div>
         <div class="fg"><label class="fl">Mesa / Comanda *</label>
           <input type="text" class="fc" id="o-client" placeholder="Ej: Mesa 5, Barra 2, VIP..."/></div>
         <div class="fg"><label class="fl">Nota General</label>
-          <textarea class="fc" id="o-gnote" placeholder="Observaciones de la comanda..." rows="2"></textarea></div>
+          <textarea class="fc" id="o-gnote" placeholder="Observaciones de la comanda..." rows="2" style="resize:none"></textarea></div>
       </div>
-      <div class="card" style="display: flex; flex-direction: column; flex: 1; min-height: 0;">
-        <div class="ch" style="flex-shrink: 0;"><div class="ct">📦 Carta de Productos</div></div>
-        <div class="chip-row" id="cat-chips" style="flex-shrink: 0;">
+      <div class="card" style="flex:1;display:flex;flex-direction:column;overflow:hidden">
+        <div class="ch" style="flex-shrink:0"><div class="ct">📦 Carta de Productos</div></div>
+        <div class="chip-row" id="cat-chips" style="flex-shrink:0">
           <button class="cchip ${orderCatFilter==='all'?'active':''}" onclick="filterCat('all',this)">Todas</button>
           ${cats.map(cat=>`<button class="cchip ${orderCatFilter===cat?'active':''}" onclick="filterCat('${cat}',this)">${cat}</button>`).join('')}
         </div>
-        <div class="prod-grid" id="pgrid" style="overflow-y: auto; flex: 1; align-content: start; padding-right: 5px;">${buildProdGrid(prods,orderCatFilter)}</div>
+        <div class="prod-grid" id="pgrid" style="flex:1;overflow-y:auto;align-content:start;padding-right:5px">${buildProdGrid(prods,orderCatFilter)}</div>
       </div>
     </div>
-    <div style="height: calc(100vh - 120px); display: flex; flex-direction: column; position: sticky; top: 80px;">
-      <div class="card" style="display: flex; flex-direction: column; max-height: 50%;">
-        <div class="ch" style="flex-shrink: 0;"><div class="ct">🧾 Comanda</div><button class="btn bo btn-sm" onclick="clearCart()">🗑️ Limpiar</button></div>
-        <div id="cart-items" style="overflow-y: hidden; flex: 1;"></div>
-        <div class="ctrow" style="flex-shrink: 0;"><div style="font-size:13px;font-weight:700;color:var(--muted)">TOTAL</div><div class="ctamt" id="cart-tot">$0.00</div></div>
-        <div id="send-wrap" style="flex-shrink: 0;"></div>
+    <div style="display:flex;flex-direction:column;height:100%;overflow:hidden">
+      <div class="card" style="flex-shrink:0;display:flex;flex-direction:column;max-height:55%">
+        <div class="ch" style="flex-shrink:0"><div class="ct">🧾 Comanda</div><button class="btn bo btn-sm" onclick="clearCart()">🗑️ Limpiar</button></div>
+        <div id="cart-items" style="flex:1;overflow:hidden"></div>
+        <div class="ctrow" style="flex-shrink:0"><div style="font-size:13px;font-weight:700;color:var(--muted)">TOTAL</div><div class="ctamt" id="cart-tot">$0.00</div></div>
+        <div id="send-wrap" style="flex-shrink:0"></div>
       </div>
-      <div class="card" style="margin-top:16px; display: flex; flex-direction: column; flex: 1; min-height: 0;">
-        <div class="ch" style="flex-shrink: 0;"><div class="ct">Mis Comandas Activas</div></div>
-        <div id="my-orders" style="overflow-y: hidden; flex: 1;">${buildMyOrders()}</div>
+      <div class="card" style="margin-top:16px;flex:1;display:flex;flex-direction:column;overflow:hidden">
+        <div class="ch" style="flex-shrink:0"><div class="ct">Mis Comandas Activas</div></div>
+        <div id="my-orders" style="flex:1;overflow:hidden">${buildMyOrders()}</div>
       </div>
     </div>
   </div>`;
@@ -1318,4 +1318,4 @@ function rCorte(c){
     ${buildSaleCard('Venta del Mes',sm,'var(--amber)',sm.monthStart?'Desde '+sm.monthStart:'',`<button class="btn bo" style="width:100%;margin-top:12px" onclick="resetSales('bar_sm','el mes')">🔄 Reiniciar Mes</button>`)}
   </div>
   <div class="card">
-    <div class="ch"><div class="ct">
+    <div class="ch"><div class="ct">📋 Historial de Cortes</div>
