@@ -20,7 +20,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 /* ── LOGIN ── */
 #login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;
   background:radial-gradient(ellipse at 60% 40%, #2D1B69 0%, #0D0D1F 60%);padding:20px;
-  position:relative;overflow:hidden;transition:opacity 0.3s ease;}
+  position:relative;overflow:hidden}
 #login-screen::before{content:'🍸 🍹 🍺 🥂 🍾 🍻';position:absolute;font-size:60px;
   opacity:.04;top:10%;left:5%;letter-spacing:30px;transform:rotate(-15deg);white-space:nowrap}
 .lcard{background:rgba(19,19,42,.95);border:1px solid rgba(139,92,246,.3);border-radius:20px;
@@ -39,7 +39,6 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
   cursor:pointer;transition:all .2s;margin-top:4px;box-shadow:0 4px 20px rgba(139,92,246,.4)}
 .btn-login:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(139,92,246,.6)}
 .btn-login:active{transform:scale(.98)}
-.btn-login:disabled{opacity:0.7;cursor:not-allowed}
 .lerr{color:var(--err);font-size:13px;margin-top:10px;display:none}
 /* ── APP ── */
 #app{display:none;min-height:100vh}
@@ -111,6 +110,7 @@ nav.sbnav{flex:1;padding:10px 0;overflow-y:auto}
 .bbar{background:rgba(139,92,246,.2);color:#C4B5FD;border:1px solid rgba(139,92,246,.3)}
 .bdel{background:rgba(20,184,166,.15);color:#5EEAD4;border:1px solid rgba(20,184,166,.3)}
 .bpaid{background:rgba(16,185,129,.12);color:#6EE7B7;border:1px solid rgba(16,185,129,.2)}
+.bcanc{background:rgba(239,68,68,.15);color:#FCA5A5;border:1px solid rgba(239,68,68,.3)}
 .b-admin{background:rgba(239,68,68,.15);color:#FCA5A5;border:1px solid rgba(239,68,68,.2)}
 .b-waiter{background:rgba(245,158,11,.15);color:#FCD34D;border:1px solid rgba(245,158,11,.2)}
 .b-bartender{background:rgba(139,92,246,.2);color:#C4B5FD;border:1px solid rgba(139,92,246,.3)}
@@ -280,7 +280,7 @@ tr:hover td{background:rgba(139,92,246,.04)}
 .pflt{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;align-items:flex-end}
 .pflt .fc{max-width:220px}
 /* ── RESPONSIVE ── */
-@media(max-width:960px){.order-layout{grid-template-columns:1fr}.cslayout{grid-template-columns:1fr}.g3{grid-template-columns:1fr 1fr}.g4{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:960px){.order-layout{grid-template-columns:1fr}.cslayout{grid-template-columns:1fr}.g3{grid-template-columns:1fr 1fr}.g4{grid-template-columns:1fr 1fr}}
 @media(max-width:768px){.sb{transform:translateX(-100%)}.sb.open{transform:translateX(0)}.main{margin-left:0}.hbg{display:block}.content{padding:14px}.g2{grid-template-columns:1fr}.g3{grid-template-columns:1fr}.g4{grid-template-columns:1fr 1fr}.kgrid{grid-template-columns:1fr}.cmeths{grid-template-columns:1fr 1fr}}
 @media(max-width:480px){.g4{grid-template-columns:1fr}.cmeths{grid-template-columns:1fr}.modal{max-width:100%}.mov{align-items:flex-end;padding:0}.modal{border-radius:var(--r) var(--r) 0 0;max-height:95vh}}
 @media print{.sb,.topbar,.hbg,.btn,#notif-box{display:none!important}body{background:#fff}.ticket{border:none}}
@@ -318,7 +318,7 @@ tr:hover td{background:rgba(139,92,246,.04)}
         <button class="ni active" data-v="orders" onclick="go('orders')"><span class="ico">🍹</span>Comandas<span class="nbadge" id="b-bar" style="display:none">●</span></button>
         <button class="ni" data-v="kitchen" onclick="go('kitchen')"><span class="ico">🍸</span>Barra<span class="nbadge" id="b-kit"></span></button>
         <button class="ni" data-v="cashier" onclick="go('cashier')"><span class="ico">🏧</span>Caja<span class="nbadge" id="b-cas"></span></button>
-        <button class="ni" data-v="products" onclick="go('products')"><span class="ico">🍺</span>Bebidas</button>
+        <button class="ni" data-v="products" onclick="go('products')"><span class="ico">📦</span>Productos</button>
         <button class="ni" data-v="corte" onclick="go('corte')"><span class="ico">📊</span>Corte</button>
         <button class="ni" data-v="users" onclick="go('users')"><span class="ico">👥</span>Usuarios</button>
       </nav>
@@ -346,7 +346,7 @@ tr:hover td{background:rgba(139,92,246,.04)}
 <!-- MODALS -->
 <div class="mov" id="m-product">
   <div class="modal">
-    <div class="mh"><div class="mt" id="mt-product">Nueva Bebida</div><button class="mc" onclick="cm('m-product')">✕</button></div>
+    <div class="mh"><div class="mt" id="mt-product">Nuevo Producto</div><button class="mc" onclick="cm('m-product')">✕</button></div>
     <div class="mb">
       <input type="hidden" id="pe-id"/>
       <div class="fg"><label class="fl">Nombre *</label><input type="text" class="fc" id="pe-name" placeholder="Ej: Margarita Clásica"/></div>
@@ -384,7 +384,7 @@ tr:hover td{background:rgba(139,92,246,.04)}
 </div>
 <div class="mov" id="m-note">
   <div class="modal" style="max-width:400px">
-    <div class="mh"><div class="mt">Nota de la Bebida</div><button class="mc" onclick="cm('m-note')">✕</button></div>
+    <div class="mh"><div class="mt">Nota del Producto</div><button class="mc" onclick="cm('m-note')">✕</button></div>
     <div class="mb">
       <div class="fg"><label class="fl">Nota especial</label><textarea class="fc" id="nte-inp" placeholder="Ej: Sin hielo, con limón extra..." rows="3"></textarea></div>
       <input type="hidden" id="nte-pid"/>
@@ -392,6 +392,24 @@ tr:hover td{background:rgba(139,92,246,.04)}
     <div class="mf"><button class="btn bo" onclick="cm('m-note')">Cancelar</button><button class="btn bp" onclick="saveItemNote()">Guardar</button></div>
   </div>
 </div>
+
+<div class="mov" id="m-cancel">
+  <div class="modal" style="max-width:400px">
+    <div class="mh"><div class="mt">🚫 Cancelar Pedido</div><button class="mc" onclick="cm('m-cancel')">✕</button></div>
+    <div class="mb">
+      <div class="fg">
+        <label class="fl">Motivo de Cancelación *</label>
+        <textarea class="fc" id="canc-reason" placeholder="Ej: Cliente se retiró, error en el pedido..." rows="3"></textarea>
+      </div>
+      <input type="hidden" id="canc-oid"/>
+    </div>
+    <div class="mf">
+      <button class="btn bo" onclick="cm('m-cancel')">Cerrar</button>
+      <button class="btn bd" onclick="confirmCancel()">Confirmar Cancelación</button>
+    </div>
+  </div>
+</div>
+
 <div class="mov" id="m-ticket">
   <div class="modal" style="max-width:420px">
     <div class="mh"><div class="mt">🧾 Ticket</div><button class="mc" onclick="cm('m-ticket')">✕</button></div>
@@ -446,54 +464,70 @@ tr:hover td{background:rgba(139,92,246,.04)}
     </div>
   </div>
 </div>
-<!-- MODAL CANCELAR -->
-<div class="mov" id="m-cancel">
-  <div class="modal" style="max-width:400px">
-    <div class="mh"><div class="mt">🚫 Cancelar Comanda</div><button class="mc" onclick="cm('m-cancel')">✕</button></div>
-    <div class="mb">
-      <input type="hidden" id="cx-oid"/>
-      <p style="font-size:13px;color:var(--muted);margin-bottom:12px">Esta acción registrará la comanda como cancelada.</p>
-      <div class="fg"><label class="fl">Motivo de cancelación *</label><textarea class="fc" id="cx-reason" placeholder="Ej: El cliente se retiró, error de captura..." rows="3"></textarea></div>
-    </div>
-    <div class="mf"><button class="btn bo" onclick="cm('m-cancel')">Cerrar</button><button class="btn bd" onclick="confirmCancel()">Confirmar Cancelación</button></div>
-  </div>
-</div>
 <div id="notif-box"></div>
 
 <script>
 // ═══════════════════════════════════════════
-// GOOGLE SHEETS INTEGRATION (DATABASE)
+// CONSTANTS & CONFIGURATION
 // ═══════════════════════════════════════════
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbxujOwYkEJqBX4Lim1tOi4UnNBMWNAYJ_Z6JDfXVvtktYEnnAOY0QdNS1Bc9u--81Fo/exec'; // 🔴 PEGA AQUÍ LA URL DE TU WEB APP DE GOOGLE APPS SCRIPT
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbwl1q2MvWALM9bb9kotUEnhCTvb1yR0KCLD0qTLYG2AvrACqpIXQ8u-ZgZuhL06SHzF/exec'; // <--- REEMPLAZAR AQUÍ
 
-// Mantenemos el almacenamiento local para la ultra-fluidez, pero lo sincronizamos en background
-const LS={
-  get:(k,d=[])=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch{return d}},
-  set:(k,v)=>{
-    localStorage.setItem(k,JSON.stringify(v));
-    if(GAS_URL.startsWith('http')){
-      fetch(GAS_URL,{
-        method:'POST',
-        body:JSON.stringify({key:k,value:v}),
-        headers:{'Content-Type':'text/plain;charset=utf-8'} // Evita errores de preflight CORS
-      }).catch(e=>console.error("Error sincronizando DB:", e));
-    }
-  },
-  obj:(k,d={})=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch{return d}}
-};
-
-// ═══════════════════════════════════════════
-// CONSTANTS
-// ═══════════════════════════════════════════
 const ROLES={admin:'Administrador',waiter:'Mesero',bartender:'Bartender',cashier:'Cajero'};
 const SL={pending:'En Espera','in-process':'Preparando',ready:'Listo',bar:'En Barra',delivered:'Entregado',paid:'Pagado',cancelled:'Cancelado'};
-const SB={pending:'bp_','in-process':'bip',ready:'br',bar:'bbar',delivered:'bdel',paid:'bpaid',cancelled:'b-admin'};
-const VIEW_T={orders:'🍹 Comandas',kitchen:'🍸 Barra',cashier:'🏧 Caja',products:'🍺 Bebidas',corte:'📊 Corte',users:'👥 Usuarios'};
+const SB={pending:'bp_','in-process':'bip',ready:'br',bar:'bbar',delivered:'bdel',paid:'bpaid',cancelled:'bcanc'};
+const VIEW_T={orders:'🍹 Comandas',kitchen:'🍸 Barra',cashier:'🏧 Caja',products:'📦 Productos',corte:'📊 Corte',users:'👥 Usuarios'};
 
 // ═══════════════════════════════════════════
 // STATE
 // ═══════════════════════════════════════════
 let CU=null,CV='orders',cart=[],editingOid=null,selOrder=null,csPayments={cash:0,card:0,transfer:0},csDisc={type:'none',value:0,reason:''},cierreData=null,cfCB=null,kFilter='active',pFlt={name:'',cat:''};
+
+// ═══════════════════════════════════════════
+// LOCALSTORAGE & GAS SYNC (Híbrido Optimizado)
+// ═══════════════════════════════════════════
+function asyncSync(key, value) {
+  if(!GAS_URL || GAS_URL === 'TU_URL_DE_GOOGLE_APPS_SCRIPT_AQUI') return;
+  fetch(GAS_URL, {
+    method: 'POST',
+    body: JSON.stringify({ action: 'write', key: key, data: value })
+  }).catch(e => console.error("Error al sincronizar con Sheets", e));
+}
+
+const LS={
+  get:(k,d=[])=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch{return d}},
+  set:(k,v)=>{localStorage.setItem(k,JSON.stringify(v)); asyncSync(k, v);},
+  obj:(k,d={})=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch{return d}}
+};
+
+// Carga Inicial desde Google Sheets al entrar a la app
+async function loadFromGAS() {
+  if (!GAS_URL || GAS_URL === 'TU_URL_DE_GOOGLE_APPS_SCRIPT_AQUI') {
+     initData(); return; 
+  }
+  try {
+    const lerr = document.getElementById('lerr');
+    if(lerr) { lerr.style.display = 'block'; lerr.style.color = 'var(--cyan)'; lerr.textContent = 'Sincronizando con base de datos...'; }
+    const res = await fetch(GAS_URL + '?action=read');
+    const data = await res.json();
+    if(data) {
+      if(data.users) localStorage.setItem('bar_users', JSON.stringify(data.users));
+      if(data.products) localStorage.setItem('bar_products', JSON.stringify(data.products));
+      if(data.orders) localStorage.setItem('bar_orders', JSON.stringify(data.orders));
+      if(data.cuts) localStorage.setItem('bar_cuts', JSON.stringify(data.cuts));
+      if(data.sd) localStorage.setItem('bar_sd', JSON.stringify(data.sd));
+      if(data.sw) localStorage.setItem('bar_sw', JSON.stringify(data.sw));
+      if(data.sm) localStorage.setItem('bar_sm', JSON.stringify(data.sm));
+    }
+    initData(); // Asegurar defaults si DB está vacía
+    if(lerr) lerr.style.display = 'none';
+  } catch(e) {
+    console.error("Error sincronizando DB", e);
+    const lerr = document.getElementById('lerr');
+    if(lerr) { lerr.style.display = 'block'; lerr.style.color = 'var(--warn)'; lerr.textContent = 'Modo sin conexión. Usando datos locales.'; setTimeout(() => lerr.style.display='none', 3000); }
+    initData();
+  }
+}
+window.addEventListener('load', loadFromGAS);
 
 // ═══════════════════════════════════════════
 // UTILS
@@ -519,18 +553,8 @@ function initData(){
     LS.set('bar_products',[
       {id:uid(),name:'Cerveza Corona',description:'Cerveza clara 355ml fría, con limón opcional',category:'Cervezas',price:50,active:true},
       {id:uid(),name:'Cerveza Modelo Negra',description:'Cerveza oscura de malta 355ml',category:'Cervezas',price:55,active:true},
-      {id:uid(),name:'Cerveza Artesanal IPA',description:'IPA local 355ml, notas cítricas y amargas',category:'Cervezas',price:80,active:true},
       {id:uid(),name:'Margarita Clásica',description:'Tequila blanco, triple sec, jugo de limón, sal',category:'Cócteles',price:120,active:true},
-      {id:uid(),name:'Mojito',description:'Ron blanco, menta fresca, limón, azúcar, soda',category:'Cócteles',price:110,active:true},
-      {id:uid(),name:'Gin Tónica',description:'Gin premium con tónica y pepino',category:'Cócteles',price:130,active:true},
-      {id:uid(),name:'Piña Colada',description:'Ron, crema de coco, jugo de piña, hielo',category:'Cócteles',price:115,active:true},
-      {id:uid(),name:'Whisky on the Rocks',description:'Whisky importado con hielo, 60ml',category:'Destilados',price:150,active:true},
-      {id:uid(),name:'Shot de Tequila',description:'Tequila blanco o reposado 60ml con sal y limón',category:'Destilados',price:60,active:true},
-      {id:uid(),name:'Copa de Vino Tinto',description:'Vino tinto de la casa 150ml',category:'Vinos',price:90,active:true},
-      {id:uid(),name:'Copa de Vino Blanco',description:'Vino blanco de la casa 150ml',category:'Vinos',price:85,active:true},
-      {id:uid(),name:'Agua Mineral',description:'Agua con gas o sin gas 500ml',category:'Sin Alcohol',price:30,active:true},
-      {id:uid(),name:'Refresco',description:'Coca-Cola, Sprite o naranja 355ml',category:'Sin Alcohol',price:35,active:true},
-      {id:uid(),name:'Jugo Natural',description:'Naranja, limón o toronja 250ml',category:'Sin Alcohol',price:45,active:true},
+      {id:uid(),name:'Agua Mineral',description:'Agua con gas o sin gas 500ml',category:'Sin Alcohol',price:30,active:true}
     ]);
   }
   if(!localStorage.getItem('bar_orders'))LS.set('bar_orders',[]);
@@ -541,37 +565,6 @@ function initData(){
 }
 
 // ═══════════════════════════════════════════
-// APP START & SYNC
-// ═══════════════════════════════════════════
-window.addEventListener('DOMContentLoaded', async () => {
-  const btn = document.querySelector('.btn-login');
-  if(GAS_URL.startsWith('http')){
-    const oldText = btn.textContent;
-    btn.textContent = 'Sincronizando DB...';
-    btn.disabled = true;
-    try {
-      const res = await fetch(GAS_URL);
-      const data = await res.json();
-      for (const key in data) {
-        localStorage.setItem(key, JSON.stringify(data[key]));
-      }
-    } catch(e) {
-      console.error("Error inicializando DB:", e);
-    }
-    btn.textContent = oldText;
-    btn.disabled = false;
-  }
-  initData();
-  
-  const session = LS.obj('bar_session', null);
-  if(session && session.uid){
-    const users = LS.get('bar_users');
-    CU = users.find(u => u.id === session.uid && u.active !== false);
-    if(CU) startApp();
-  }
-});
-
-// ═══════════════════════════════════════════
 // AUTH
 // ═══════════════════════════════════════════
 function doLogin(){
@@ -580,7 +573,7 @@ function doLogin(){
   const errEl=document.getElementById('lerr');
   const users=LS.get('bar_users');
   const u=users.find(u=>u.name.toLowerCase()===name.toLowerCase()&&u.password===pass&&u.active!==false);
-  if(!u){errEl.style.display='block';return}
+  if(!u){errEl.style.display='block'; errEl.style.color='var(--err)'; errEl.textContent='Usuario o contraseña incorrectos'; return;}
   errEl.style.display='none';
   CU=u;LS.set('bar_session',{uid:u.id});
   logAct(u.id,'Inició sesión');
@@ -675,41 +668,29 @@ function notify(ico,title,msg,dur=4000,cls=''){
 // ═══════════════════════════════════════════
 // CANCELACIONES
 // ═══════════════════════════════════════════
-function promptCancel(oid){
-  document.getElementById('cx-oid').value = oid;
-  document.getElementById('cx-reason').value = '';
+function askCancel(oid) {
+  document.getElementById('canc-oid').value = oid;
+  document.getElementById('canc-reason').value = '';
   om('m-cancel');
 }
-
-function confirmCancel(){
-  const oid = document.getElementById('cx-oid').value;
-  const reason = document.getElementById('cx-reason').value.trim();
-  if(!reason){ notify('⚠️','Requerido','Ingresa el motivo de cancelación.',3000); return; }
+function confirmCancel() {
+  const oid = document.getElementById('canc-oid').value;
+  const reason = document.getElementById('canc-reason').value.trim();
+  if(!reason) { notify('⚠️', 'Atención', 'Ingresa el motivo de cancelación.', 3000); return; }
   
   const orders = LS.get('bar_orders');
-  const i = orders.findIndex(o=>o.id===oid);
-  if(i===-1) return;
+  const i = orders.findIndex(o => o.id === oid);
+  if(i === -1) return;
   
   orders[i].status = 'cancelled';
   orders[i].cancelReason = reason;
   orders[i].cancelledAt = new Date().toISOString();
-  orders[i].cancelledBy = CU.name;
-  
   LS.set('bar_orders', orders);
-  logAct(CU.id, `Canceló comanda #${orders[i].number} - Motivo: ${reason}`);
-  notify('✅','Cancelada',`Comanda #${orders[i].number} cancelada exitosamente.`,3000);
-  cm('m-cancel');
   
-  if(CV==='orders'){
-    const mo = document.getElementById('my-orders');
-    if(mo) mo.innerHTML = buildMyOrders();
-  } else if (CV==='cashier') {
-    selOrder = null;
-    go('cashier');
-  } else {
-    go(CV);
-  }
-  updBadges();
+  logAct(CU.id, `Canceló comanda #${orders[i].number}. Motivo: ${reason}`);
+  cm('m-cancel');
+  notify('🚫', 'Pedido Cancelado', `Comanda #${orders[i].number} ha sido cancelada.`, 4000);
+  go(CV);
 }
 
 // ═══════════════════════════════════════════
@@ -743,7 +724,7 @@ function rOrders(c){
           <textarea class="fc" id="o-gnote" placeholder="Observaciones de la comanda..." rows="2"></textarea></div>
       </div>
       <div class="card">
-        <div class="ch"><div class="ct">🍺 Carta de Bebidas</div></div>
+        <div class="ch"><div class="ct">📦 Carta de Productos</div></div>
         <div class="chip-row" id="cat-chips">
           <button class="cchip ${orderCatFilter==='all'?'active':''}" onclick="filterCat('all',this)">Todas</button>
           ${cats.map(cat=>`<button class="cchip ${orderCatFilter===cat?'active':''}" onclick="filterCat('${cat}',this)">${cat}</button>`).join('')}
@@ -778,7 +759,7 @@ function rOrders(c){
 }
 function buildProdGrid(prods,cat){
   const f=cat==='all'?prods:prods.filter(p=>p.category===cat);
-  if(!f.length)return'<p style="color:var(--muted);font-size:13px;padding:8px">Sin bebidas en esta categoría.</p>';
+  if(!f.length)return'<p style="color:var(--muted);font-size:13px;padding:8px">Sin productos en esta categoría.</p>';
   return f.map(p=>`<button class="pb" onclick="addToCart('${p.id}')">
     <span class="pn">${p.name}</span><span class="pp">${fc(p.price)}</span><span class="pc">${p.category}</span>
   </button>`).join('');
@@ -805,7 +786,7 @@ function saveItemNote(){const pid=document.getElementById('nte-pid').value;const
 function buildCart(){
   const el=document.getElementById('cart-items');const tel=document.getElementById('cart-tot');
   if(!el)return;
-  if(!cart.length){el.innerHTML='<div class="empty" style="padding:20px 0"><div class="ei">🧾</div><p>Sin bebidas</p></div>';if(tel)tel.textContent='$0.00';return}
+  if(!cart.length){el.innerHTML='<div class="empty" style="padding:20px 0"><div class="ei">🧾</div><p>Sin productos</p></div>';if(tel)tel.textContent='$0.00';return}
   const tot=cart.reduce((s,i)=>s+i.price*i.qty,0);
   el.innerHTML='<div style="display:flex;flex-direction:column;gap:8px">'+cart.map(i=>`
     <div class="cart-item">
@@ -849,10 +830,10 @@ function buildMyOrders(){
         <span style="font-weight:700">#${o.number} – ${o.clientName}</span>
         <span class="badge ${SB[o.status]}">${SL[o.status]}</span>
       </div>
-      <div style="font-size:12px;color:var(--muted)">${o.items.length} bebida(s) · ${fc(o.total)}</div>
+      <div style="font-size:12px;color:var(--muted)">${o.items.length} producto(s) · ${fc(o.total)}</div>
       ${['pending','in-process'].includes(o.status)?`<div style="margin-top:8px;display:flex;gap:6px">
         <button class="btn bi btn-sm" onclick="editOrder('${o.id}')">✏️ Editar</button>
-        <button class="btn bo btn-sm" onclick="promptCancel('${o.id}')">🚫 Cancelar</button>
+        <button class="btn bo btn-sm" style="color:var(--err)" onclick="askCancel('${o.id}')">🚫 Cancelar</button>
         ${o.wasUpdated?`<span style="font-size:11px;background:rgba(245,158,11,.15);color:#FCD34D;border:1px solid rgba(245,158,11,.3);border-radius:4px;padding:3px 8px;font-weight:700;align-self:center">⚠️ Actualizado</span>`:''}
       </div>`:''}
       ${o.status==='bar'?`<div style="margin-top:8px"><button class="btn bcyan btn-sm" onclick="markDel('${o.id}')">🍹 Marcar Entregado</button></div>`:''}
@@ -866,8 +847,9 @@ function sendOrder(){
     if(cEl){cEl.focus();cEl.style.borderColor='var(--err)';setTimeout(()=>cEl.style.borderColor='',2500);}
     return;
   }
-  if(!cart.length){notify('⚠️','Comanda vacía','Agrega al menos una bebida.',3000);return}
+  if(!cart.length){notify('⚠️','Comanda vacía','Agrega al menos un producto.',3000);return}
   const tot=cart.reduce((s,i)=>s+i.price*i.qty,0);
+  
   if(editingOid){
     const orders=LS.get('bar_orders');
     const idx=orders.findIndex(o=>o.id===editingOid);
@@ -911,7 +893,7 @@ function editOrder(oid){
   editingOid=oid;
   cart=o.items.map(i=>({...i}));
   go('orders');
-  notify('✏️',`Editando Comanda #${o.number}`,'Modifica las bebidas y guarda los cambios.',4000);
+  notify('✏️',`Editando Comanda #${o.number}`,'Modifica los productos y guarda los cambios.',4000);
 }
 function cancelEdit(){
   editingOid=null;cart=[];go('orders');
@@ -943,7 +925,13 @@ function rKitchen(c){
     const s={pending:0,'in-process':1,ready:2,bar:3,delivered:4,paid:5,cancelled:6};
     return((s[a.status]||9)-(s[b.status]||9))||new Date(a.timestamp)-new Date(b.timestamp);
   });
-  const cnt={pending:all.filter(o=>o.status==='pending').length,'in-process':all.filter(o=>o.status==='in-process').length,ready:all.filter(o=>o.status==='ready').length,bar:all.filter(o=>o.status==='bar').length,cancelled:all.filter(o=>o.status==='cancelled').length};
+  const cnt={
+    pending:all.filter(o=>o.status==='pending').length,
+    'in-process':all.filter(o=>o.status==='in-process').length,
+    ready:all.filter(o=>o.status==='ready').length,
+    bar:all.filter(o=>o.status==='bar').length,
+    cancelled:all.filter(o=>o.status==='cancelled').length
+  };
   c.innerHTML=`
   <div class="fpills">
     <button class="fpill ${kFilter==='active'?'active':''}" onclick="kFilter='active';go('kitchen')">🔥 Activas (${cnt.pending+cnt['in-process']+cnt.ready+cnt.bar})</button>
@@ -951,8 +939,8 @@ function rKitchen(c){
     <button class="fpill ${kFilter==='in-process'?'active':''}" onclick="kFilter='in-process';go('kitchen')">🍸 Preparando (${cnt['in-process']})</button>
     <button class="fpill ${kFilter==='ready'?'active':''}" onclick="kFilter='ready';go('kitchen')">✅ Listos (${cnt.ready})</button>
     <button class="fpill ${kFilter==='bar'?'active':''}" onclick="kFilter='bar';go('kitchen')">🍹 En Barra (${cnt.bar})</button>
-    <button class="fpill ${kFilter==='all'?'active':''}" onclick="kFilter='all';go('kitchen')">📋 Todas</button>
     <button class="fpill ${kFilter==='cancelled'?'active':''}" onclick="kFilter='cancelled';go('kitchen')">🚫 Canceladas (${cnt.cancelled})</button>
+    <button class="fpill ${kFilter==='all'?'active':''}" onclick="kFilter='all';go('kitchen')">📋 Todas</button>
   </div>
   ${!sorted.length?'<div class="card"><div class="empty"><div class="ei">🍸</div><h3>Sin comandas</h3><p>No hay comandas en esta categoría.</p></div></div>':
   `<div class="kgrid">${sorted.map(o=>buildKCard(o)).join('')}</div>`}`;
@@ -964,6 +952,7 @@ function buildKCard(o){
     'in-process':`<button class="btn bs btn-sm" onclick="updStatus('${o.id}','ready')">✅ Listo</button>`,
     ready:`<button class="btn bp btn-sm" onclick="updStatus('${o.id}','bar')">🍹 En Barra</button>`,
     bar:`<span style="font-size:12px;color:var(--bar2);font-weight:600">🔔 Esperando mesero...</span>`,
+    cancelled: `<span style="font-size:12px;color:var(--err);font-weight:600">🚫 Motivo: ${o.cancelReason}</span>`
   };
   return`<div class="ocard" data-s="${o.status}">
     <div class="och">
@@ -973,7 +962,6 @@ function buildKCard(o){
     </div>
     <div class="ocb">
       ${o.wasUpdated?`<div style="background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.3);border-radius:6px;padding:7px 10px;margin-bottom:10px;font-size:12px;font-weight:700;color:#FCD34D;animation:pulse 1.5s infinite">⚠️ COMANDA ACTUALIZADA — Revisa los cambios antes de preparar</div>`:''}
-      ${o.status==='cancelled'?`<div style="background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);border-radius:6px;padding:7px 10px;margin-bottom:10px;font-size:12px;color:#FCA5A5;"><strong>Motivo de cancelación:</strong> ${o.cancelReason||'Sin motivo'}<br><span style="font-size:10px;opacity:0.8">Cancelado por: ${o.cancelledBy||'Desconocido'}</span></div>`:''}
       <ul class="oitems">
         ${o.items.map(i=>`<li><span class="oq">${i.qty}×</span> ${i.name}${i.note?`<div class="inotice">📝 ${i.note}</div>`:''}</li>`).join('')}
       </ul>
@@ -983,7 +971,8 @@ function buildKCard(o){
     <div class="ocf"><div class="sbts">
       ${btns[o.status]||''}
       ${!['pending','paid','delivered','cancelled'].includes(o.status)?`<button class="btn bo btn-sm" onclick="updStatus('${o.id}','pending')">⏪ Regresar</button>`:''}
-      ${['delivered','paid','cancelled'].includes(o.status)?`<span style="font-size:12px;color:var(--muted)">Comanda ${SL[o.status].toLowerCase()}</span>`:''}
+      ${!['paid','cancelled'].includes(o.status)?`<button class="btn bo btn-sm" style="color:var(--err); border-color:rgba(239,68,68,.3)" onclick="askCancel('${o.id}')">🚫 Cancelar</button>`:''}
+      ${['delivered','paid'].includes(o.status)?`<span style="font-size:12px;color:var(--muted)">Comanda completada</span>`:''}
       ${o.wasUpdated?`<button class="btn bw btn-xs" onclick="ackUpd('${o.id}')">👁️ Visto</button>`:''}
     </div></div>
   </div>`;
@@ -1045,10 +1034,7 @@ function buildPayPanel(){
     <div class="ch">
       <div><div class="ct">#${o.number} – ${o.clientName}</div>
       <div style="font-size:12px;color:var(--muted);margin-top:3px"><span class="badge ${SB[o.status]}">${SL[o.status]}</span> · 👤 ${o.workerName}</div></div>
-      <div style="display:flex;gap:6px">
-        <button class="btn bd btn-sm" onclick="promptCancel('${o.id}')" title="Cancelar Comanda">🚫</button>
-        <button class="btn bo btn-sm" onclick="selOrder=null;go('cashier')">✕</button>
-      </div>
+      <button class="btn bo btn-sm" onclick="selOrder=null;go('cashier')">✕</button>
     </div>
     <div style="margin-bottom:14px">
       ${o.items.map(i=>`<div style="display:flex;justify-content:space-between;font-size:13px;padding:3px 0;color:var(--text)">
@@ -1181,7 +1167,7 @@ function showTicket(oArg){
     <div>Mesa/Comanda: ${o.clientName}</div>
     <div>Atendido: ${o.workerName}</div>
     <hr class="tdiv">
-    <div><strong>BEBIDAS</strong></div>
+    <div><strong>PRODUCTOS</strong></div>
     ${o.items.map(i=>`<div style="display:flex;justify-content:space-between"><span>${i.qty}× ${i.name}</span><span>${fc(i.price*i.qty)}</span></div>${i.note?`<div style="padding-left:14px;font-size:11px;color:#666">→ ${i.note}</div>`:''}`).join('')}
     <hr class="tdiv">
     <div style="display:flex;justify-content:space-between"><span>Subtotal:</span><span>${fc(o.total)}</span></div>
@@ -1211,130 +1197,309 @@ function printTicket(){
 }
 
 // ═══════════════════════════════════════════
-// BEBIDAS (PRODUCTS) COMPLETADO
+// PRODUCTOS (PRODUCTS)
 // ═══════════════════════════════════════════
 function rProducts(c){
   const prods=LS.get('bar_products');
   const cats=[...new Set(prods.map(p=>p.category))].sort();
   const dl=document.getElementById('dl-cats');
-  if(dl)dl.innerHTML=cats.map(cat=>`<option value="${cat}">`).join('');
+  if(dl)dl.innerHTML=cats.map(c=>`<option value="${c}">`).join('');
   c.innerHTML=`<div class="card">
-    <div class="ch"><div class="ct">🍺 Carta de Bebidas</div>
-      <button class="btn bp" onclick="openProd()">+ Nueva Bebida</button></div>
+    <div class="ch"><div class="ct">📦 Carta de Productos</div>
+      <button class="btn bp" onclick="openProd()">+ Nuevo Producto</button></div>
     <div class="pflt">
       <div><label class="fl">Buscar Nombre</label>
         <input type="text" class="fc" id="pf-name" placeholder="Nombre..." value="${pFlt.name}"
           oninput="pFlt.name=this.value;filterProds()"/></div>
-      <div><label class="fl">Categoría</label>
+      <div><label class="fl">Filtrar Categoría</label>
         <select class="fc" id="pf-cat" onchange="pFlt.cat=this.value;filterProds()">
           <option value="">Todas</option>
-          ${cats.map(cat=>`<option value="${cat}" ${pFlt.cat===cat?'selected':''}>${cat}</option>`).join('')}
+          ${cats.map(x=>`<option value="${x}" ${pFlt.cat===x?'selected':''}>${x}</option>`).join('')}
         </select></div>
+      ${pFlt.name||pFlt.cat?`<div style="display:flex;align-items:flex-end"><button class="btn bo" onclick="pFlt={name:'',cat:''};go('products')">✕ Limpiar</button></div>`:''}
     </div>
-    <div class="tw"><table id="prod-table"></table></div>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Nombre</th><th>Descripción</th><th>Categoría</th><th>Precio</th><th>Estado</th><th>Acciones</th></tr></thead>
+        <tbody id="prod-tbody">${buildProdRows(prods)}</tbody>
+      </table>
+    </div>
+    <div class="itext" id="prod-count">${prods.length} producto(s)</div>
   </div>`;
   filterProds();
 }
+function buildProdRows(prods){
+  return prods.map(p=>`<tr data-name="${p.name.toLowerCase()}" data-cat="${(p.category||'').toLowerCase()}">
+    <td><strong style="color:var(--text)">${p.name}</strong></td>
+    <td><span style="font-size:12px;color:var(--muted)">${p.description||'—'}</span></td>
+    <td><span class="badge b-bartender">${p.category}</span></td>
+    <td><strong style="color:var(--bar2)">${fc(p.price)}</strong></td>
+    <td><span class="badge ${p.active===false?'':'br'}" style="${p.active===false?'background:rgba(100,116,139,.1);color:var(--muted)':''}">
+      ${p.active===false?'Inactivo':'Activo'}</span></td>
+    <td><div style="display:flex;gap:6px;flex-wrap:wrap">
+      <button class="btn bo btn-sm" onclick="openProd('${p.id}')">✏️ Editar</button>
+      <button class="btn btn-sm ${p.active===false?'bs':'bw'}" onclick="togProd('${p.id}')">
+        ${p.active===false?'✅ Activar':'🚫 Desactivar'}</button>
+      <button class="btn bd btn-sm" onclick="delProd('${p.id}')">🗑️</button>
+    </div></td>
+  </tr>`).join('');
+}
 function filterProds(){
-  const prods=LS.get('bar_products');
-  const t=document.getElementById('prod-table');
-  if(!t)return;
-  const f=prods.filter(p=>p.active!==false && p.name.toLowerCase().includes(pFlt.name.toLowerCase()) && (pFlt.cat===''?true:p.category===pFlt.cat));
-  t.innerHTML=`<tr><th>Nombre</th><th>Categoría</th><th>Precio</th><th>Acciones</th></tr>`+
-    f.map(p=>`<tr>
-      <td><strong>${p.name}</strong><br><span style="font-size:11px;color:var(--muted)">${p.description||''}</span></td>
-      <td><span class="badge bbar">${p.category}</span></td>
-      <td>${fc(p.price)}</td>
-      <td><button class="btn bi btn-sm" onclick="editProd('${p.id}')">✏️</button> <button class="btn bd btn-sm" onclick="delProd('${p.id}')">🗑️</button></td>
-    </tr>`).join('');
+  const nm=(document.getElementById('pf-name')?.value||pFlt.name).toLowerCase();
+  const ct=(document.getElementById('pf-cat')?.value||pFlt.cat).toLowerCase();
+  const rows=document.querySelectorAll('#prod-tbody tr');let vis=0;
+  rows.forEach(r=>{const rn=r.dataset.name||'',rc=r.dataset.cat||'';
+    const show=(!nm||rn.includes(nm))&&(!ct||rc===ct);r.style.display=show?'':'none';if(show)vis++;});
+  const el=document.getElementById('prod-count');
+  if(el)el.textContent=`${vis} de ${rows.length} producto(s)`;
 }
-function openProd(){ document.getElementById('pe-id').value=''; document.getElementById('pe-name').value=''; document.getElementById('pe-desc').value=''; document.getElementById('pe-cat').value=''; document.getElementById('pe-price').value=''; document.getElementById('mt-product').textContent='Nueva Bebida'; om('m-product'); }
-function editProd(id){ const p=LS.get('bar_products').find(x=>x.id===id); if(p){ document.getElementById('pe-id').value=p.id; document.getElementById('pe-name').value=p.name; document.getElementById('pe-desc').value=p.description; document.getElementById('pe-cat').value=p.category; document.getElementById('pe-price').value=p.price; document.getElementById('mt-product').textContent='Editar Bebida'; om('m-product'); } }
+function openProd(pid){
+  document.getElementById('pe-id').value=pid||'';
+  if(pid){
+    const p=LS.get('bar_products').find(x=>x.id===pid);if(!p)return;
+    document.getElementById('mt-product').textContent='Editar Producto';
+    document.getElementById('pe-name').value=p.name;
+    document.getElementById('pe-desc').value=p.description||'';
+    document.getElementById('pe-cat').value=p.category;
+    document.getElementById('pe-price').value=p.price;
+  }else{
+    document.getElementById('mt-product').textContent='Nuevo Producto';
+    ['pe-name','pe-desc','pe-cat','pe-price'].forEach(id=>document.getElementById(id).value='');
+  }
+  const cats=[...new Set(LS.get('bar_products').map(p=>p.category))].sort();
+  const dl=document.getElementById('dl-cats');
+  if(dl)dl.innerHTML=cats.map(c=>`<option value="${c}">`).join('');
+  om('m-product');
+}
 function saveProduct(){
-  const id=document.getElementById('pe-id').value, name=document.getElementById('pe-name').value.trim(), desc=document.getElementById('pe-desc').value.trim(), cat=document.getElementById('pe-cat').value.trim(), price=parseFloat(document.getElementById('pe-price').value)||0;
-  if(!name||!cat||price<=0){ notify('⚠️','Error','Completa los campos obligatorios.',3000); return; }
-  let prods=LS.get('bar_products');
-  if(id){ const i=prods.findIndex(x=>x.id===id); if(i>-1) prods[i]={...prods[i],name,description:desc,category:cat,price}; }
-  else{ prods.push({id:uid(),name,description:desc,category:cat,price,active:true}); }
-  LS.set('bar_products',prods); cm('m-product'); go('products'); notify('✅','Guardado','Bebida guardada.',2000);
+  const name=document.getElementById('pe-name').value.trim();
+  const desc=document.getElementById('pe-desc').value.trim();
+  const cat=document.getElementById('pe-cat').value.trim();
+  const price=parseFloat(document.getElementById('pe-price').value);
+  const eid=document.getElementById('pe-id').value;
+  if(!name||!cat||isNaN(price)||price<0){notify('⚠️','Campos requeridos','Nombre, categoría y precio son obligatorios.',3000);return}
+  const prods=LS.get('bar_products');
+  if(eid){
+    const i=prods.findIndex(p=>p.id===eid);
+    if(i!==-1){prods[i]={...prods[i],name,description:desc,category:cat,price};logAct(CU.id,`Editó producto "${name}"`);}
+  }else{
+    prods.push({id:uid(),name,description:desc,category:cat,price,active:true});
+    logAct(CU.id,`Creó producto "${name}" - ${fc(price)}`);
+  }
+  LS.set('bar_products',prods);cm('m-product');
+  notify('✅',eid?'Producto actualizado':'Producto creado',name,3000);go('products');
 }
-function delProd(id){ confirm2('¿Eliminar bebida?','Ya no aparecerá en la carta.',()=>{ let p=LS.get('bar_products'); const i=p.findIndex(x=>x.id===id); if(i>-1)p[i].active=false; LS.set('bar_products',p); go('products'); notify('✅','Eliminada','Bebida eliminada.',2000); }); }
+function togProd(pid){
+  const prods=LS.get('bar_products');const i=prods.findIndex(p=>p.id===pid);if(i===-1)return;
+  prods[i].active=prods[i].active===false?true:false;LS.set('bar_products',prods);
+  logAct(CU.id,`${prods[i].active?'Activó':'Desactivó'} producto "${prods[i].name}"`);go('products');
+}
+function delProd(pid){
+  const p=LS.get('bar_products').find(x=>x.id===pid);if(!p)return;
+  confirm2(`¿Eliminar "${p.name}"?`,'Esta acción no se puede deshacer.',()=>{
+    LS.set('bar_products',LS.get('bar_products').filter(x=>x.id!==pid));
+    logAct(CU.id,`Eliminó producto "${p.name}"`);
+    notify('✅','Producto eliminado',p.name,3000);go('products');
+  });
+}
 
 // ═══════════════════════════════════════════
-// USUARIOS (USERS) COMPLETADO
-// ═══════════════════════════════════════════
-function rUsers(c){
-  const users=LS.get('bar_users').filter(u=>u.active!==false);
-  c.innerHTML=`<div class="card"><div class="ch"><div class="ct">👥 Usuarios</div><button class="btn bp" onclick="openUser()">+ Nuevo Usuario</button></div>
-  <div class="tw"><table><tr><th>Nombre</th><th>Rol</th><th>Acciones</th></tr>
-  ${users.map(u=>`<tr><td><strong>${u.name}</strong></td><td><span class="badge b-${u.role}">${ROLES[u.role]||u.role}</span></td>
-  <td><button class="btn bd btn-sm" onclick="delUser('${u.id}')" ${u.id===CU.id?'disabled':''}>🗑️</button></td></tr>`).join('')}
-  </table></div></div>`;
-}
-function openUser(){ document.getElementById('ue-id').value=''; document.getElementById('ue-name').value=''; document.getElementById('ue-pass').value=''; document.getElementById('ue-role').value='waiter'; om('m-user'); }
-function saveUser(){
-  const id=document.getElementById('ue-id').value, name=document.getElementById('ue-name').value.trim(), pass=document.getElementById('ue-pass').value, role=document.getElementById('ue-role').value;
-  if(!name||!pass){ notify('⚠️','Error','Completa los datos.',3000); return; }
-  let users=LS.get('bar_users');
-  users.push({id:uid(),name,password:pass,role,active:true});
-  LS.set('bar_users',users); cm('m-user'); go('users'); notify('✅','Guardado','Usuario creado.',2000);
-}
-function delUser(id){ confirm2('¿Eliminar usuario?','No podrá iniciar sesión.',()=>{ let u=LS.get('bar_users'); const i=u.findIndex(x=>x.id===id); if(i>-1)u[i].active=false; LS.set('bar_users',u); go('users'); }); }
-
-// ═══════════════════════════════════════════
-// CORTE DE CAJA (CORTE) COMPLETADO
+// CORTE
 // ═══════════════════════════════════════════
 function rCorte(c){
-  const sd = LS.obj('bar_sd',{total:0,cash:0,card:0,transfer:0,date:today(),initCash:0});
+  const sd=LS.obj('bar_sd',{total:0,cash:0,card:0,transfer:0,date:today()});
+  const sw=LS.obj('bar_sw',{total:0,cash:0,card:0,transfer:0});
+  const sm=LS.obj('bar_sm',{total:0,cash:0,card:0,transfer:0});
+  const cuts=LS.get('bar_cuts');
+  c.innerHTML=`
+  <div class="g3" style="margin-bottom:20px">
+    ${buildSaleCard('Venta del Día',sd,'var(--bar)',sd.date||today(),`<button class="btn bp" style="width:100%;margin-top:12px" onclick="openCierre()">🔒 Cerrar Caja</button>`)}
+    ${buildSaleCard('Venta de la Semana',sw,'var(--cyan)',sw.weekStart?'Desde '+sw.weekStart:'',`<button class="btn bo" style="width:100%;margin-top:12px" onclick="resetSales('bar_sw','la semana')">🔄 Reiniciar Semana</button>`)}
+    ${buildSaleCard('Venta del Mes',sm,'var(--amber)',sm.monthStart?'Desde '+sm.monthStart:'',`<button class="btn bo" style="width:100%;margin-top:12px" onclick="resetSales('bar_sm','el mes')">🔄 Reiniciar Mes</button>`)}
+  </div>
+  <div class="card">
+    <div class="ch"><div class="ct">📋 Historial de Cortes</div>
+      ${cuts.length?`<div style="display:flex;gap:8px">
+        <button class="btn bo btn-sm" onclick="printCuts('day')">📄 PDF Hoy</button>
+        <button class="btn bo btn-sm" onclick="printCuts('all')">📄 PDF Historial</button>
+      </div>`:''}
+    </div>
+    ${!cuts.length?'<div class="empty"><div class="ei">📊</div><p>Sin cortes registrados aún.</p></div>':
+    `<div class="tw"><table>
+      <thead><tr><th>Fecha</th><th>Cajero</th><th>C. Inicial</th><th>Ventas</th><th>Efectivo</th><th>Tarjeta</th><th>Transfer.</th><th>Esperado</th><th>Físico</th><th>Diferencia</th></tr></thead>
+      <tbody>${cuts.slice().reverse().map(ct=>`<tr>
+        <td>${fds(ct.timestamp)}</td><td>${ct.workerName}</td>
+        <td>${fc(ct.initCash)}</td><td>${fc(ct.salesTotal)}</td>
+        <td>${fc(ct.cash)}</td><td>${fc(ct.card)}</td><td>${fc(ct.transfer)}</td>
+        <td>${fc(ct.expectedCash)}</td><td>${fc(ct.physicalCash)}</td>
+        <td style="color:${ct.diff===0?'var(--ok)':ct.diff>0?'var(--warn)':'var(--err)'}">
+          <strong>${ct.diff>0?'+':''}${fc(ct.diff)}</strong>
+          <span style="font-size:11px"> ${ct.diff===0?'✅ Cuadra':ct.diff>0?'⬆️ Sobra':'⬇️ Falta'}</span>
+        </td></tr>`).join('')}</tbody>
+    </table></div>`}
+  </div>`;
+}
+function buildSaleCard(ttl,s,color,sub,extra){
+  return`<div class="stat" style="border-top:4px solid ${color}">
+    <div class="stl">${ttl}</div>
+    <div class="stv">${fc(s.total)}</div>
+    <div class="sts">${sub}</div>
+    <div class="cmeths">
+      <div class="mcard mc"><div class="mamt">${fc(s.cash)}</div><div class="mlbl">💵 Efectivo</div></div>
+      <div class="mcard mk"><div class="mamt">${fc(s.card)}</div><div class="mlbl">💳 Tarjeta</div></div>
+      <div class="mcard mt"><div class="mamt">${fc(s.transfer)}</div><div class="mlbl">📱 Transfer.</div></div>
+    </div>
+    ${extra}
+  </div>`;
+}
+function openCierre(){
+  const sd=LS.obj('bar_sd',{});
+  document.getElementById('ci-ini').value=sd.initCash||'';
+  document.getElementById('ci-fis').value='';
+  document.getElementById('ci-res').style.display='none';
+  document.getElementById('btn-corte').style.display='none';
+  cierreData=null;om('m-cierre');
+}
+function calcCierre(){
+  const ini=parseFloat(document.getElementById('ci-ini').value)||0;
+  const fis=parseFloat(document.getElementById('ci-fis').value);
+  if(isNaN(fis)){notify('⚠️','Ingresa el monto','Por favor ingresa el efectivo físico contado.',3000);return}
+  const sd=LS.obj('bar_sd',{cash:0});
+  const cashSales=sd.cash||0;const expected=ini+cashSales;const diff=fis-expected;
+  cierreData={ini,fis,expected,diff,cashSales};
+  const cls=diff===0?'ok':diff>0?'over':'short';
+  const msg=diff===0?'✅ La caja cuadra perfectamente.':diff>0?`⬆️ Sobran ${fc(Math.abs(diff))}`:(`⬇️ Faltan ${fc(Math.abs(diff))}`);
+  const resEl=document.getElementById('ci-res');
+  resEl.innerHTML=`<div class="chkbox ${cls}">
+    <div class="prow"><span>Caja Inicial:</span><strong>${fc(ini)}</strong></div>
+    <div class="prow"><span>Ventas en Efectivo:</span><strong>${fc(cashSales)}</strong></div>
+    <div class="prow" style="border-top:1px solid var(--border);margin-top:4px;padding-top:8px">
+      <span>Efectivo Esperado:</span><strong>${fc(expected)}</strong></div>
+    <div class="prow"><span>Efectivo Físico:</span><strong>${fc(fis)}</strong></div>
+    <div class="prow" style="font-size:16px;font-weight:900;border-top:2px solid var(--border);margin-top:6px;padding-top:10px">
+      <span>Diferencia:</span>
+      <span style="color:${cls==='ok'?'var(--ok)':cls==='over'?'var(--warn)':'var(--err)'}">
+        ${diff>0?'+':''}${fc(diff)}</span></div>
+    <div style="margin-top:6px;font-weight:700;color:var(--text)">${msg}</div>
+  </div>`;
+  resEl.style.display='block';document.getElementById('btn-corte').style.display='';
+}
+function doCorte(){
+  if(!cierreData)return;
+  const sd=LS.obj('bar_sd',{total:0,cash:0,card:0,transfer:0});
+  const cut={id:uid(),timestamp:new Date().toISOString(),workerName:CU.name,workerId:CU.id,
+    initCash:cierreData.ini,salesTotal:sd.total,cash:sd.cash,card:sd.card,transfer:sd.transfer,
+    expectedCash:cierreData.expected,physicalCash:cierreData.fis,diff:cierreData.diff};
+  const cuts=LS.get('bar_cuts');cuts.push(cut);LS.set('bar_cuts',cuts);
+  LS.set('bar_sd',{total:0,cash:0,card:0,transfer:0,date:today(),initCash:cierreData.fis});
+  logAct(CU.id,`Realizó corte de caja. Dif: ${fc(cierreData.diff)}`);
+  cm('m-cierre');notify('✅','Corte realizado','Caja reiniciada para el nuevo turno.',4000);go('corte');
+}
+function resetSales(k,lbl){
+  confirm2(`¿Reiniciar ventas de ${lbl}?`,`Los totales se volverán cero. El historial no se afecta.`,()=>{
+    if(k==='bar_sw')LS.set(k,{total:0,cash:0,card:0,transfer:0,weekStart:weekStart()});
+    else LS.set(k,{total:0,cash:0,card:0,transfer:0,monthStart:monthStart()});
+    logAct(CU.id,`Reinició estadísticas de ${lbl}`);notify('✅','Ventas reiniciadas','',3000);go('corte');
+  });
+}
+function printCuts(type){
+  const cuts=LS.get('bar_cuts');
+  const d=type==='day'?cuts.filter(c=>c.timestamp.startsWith(today())):cuts;
+  const w=window.open('','_blank');
+  w.document.write(`<html><head><title>Cortes</title><style>body{font-family:sans-serif;font-size:12px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ccc;padding:6px;text-align:left}</style></head>
+  <body><h2>Reporte de Cortes ${type==='day'?'(Hoy)':'(Histórico)'}</h2>
+  <table><tr><th>Fecha</th><th>Cajero</th><th>Inicial</th><th>Ventas</th><th>Esperado</th><th>Físico</th><th>Diferencia</th></tr>
+  ${d.map(c=>`<tr><td>${fds(c.timestamp)}</td><td>${c.workerName}</td><td>${fc(c.initCash)}</td><td>${fc(c.salesTotal)}</td><td>${fc(c.expectedCash)}</td><td>${fc(c.physicalCash)}</td><td>${fc(c.diff)}</td></tr>`).join('')}
+  </table><script>window.print();window.close()}<\/script></body></html>`);
+}
+
+// ═══════════════════════════════════════════
+// USUARIOS (USERS)
+// ═══════════════════════════════════════════
+function rUsers(c){
+  const users=LS.get('bar_users');
   c.innerHTML=`<div class="card">
-    <div class="ch"><div class="ct">📊 Corte de Caja</div><button class="btn bp" onclick="om('m-cierre')">🔒 Realizar Cierre</button></div>
-    <div class="g4">
-      <div class="stat"><div class="stl">Ventas del Día</div><div class="stv">${fc(sd.total)}</div></div>
-      <div class="stat"><div class="stl">Efectivo</div><div class="stv" style="color:var(--ok)">${fc(sd.cash)}</div></div>
-      <div class="stat"><div class="stl">Tarjeta</div><div class="stv" style="color:var(--info)">${fc(sd.card)}</div></div>
-      <div class="stat"><div class="stl">Transferencia</div><div class="stv" style="color:var(--bar2)">${fc(sd.transfer)}</div></div>
+    <div class="ch"><div class="ct">👥 Usuarios del Sistema</div>
+      <button class="btn bp" onclick="openUser()">+ Nuevo Usuario</button></div>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Usuario</th><th>Rol</th><th>Creado</th><th>Estado</th><th>Acciones</th></tr></thead>
+        <tbody>${users.map(u=>`<tr>
+          <td><strong style="color:var(--text)">${u.name}</strong></td>
+          <td><span class="badge b-${u.role}">${ROLES[u.role]||u.role}</span></td>
+          <td><span style="font-size:12px;color:var(--muted)">${fds(u.createdAt)}</span></td>
+          <td><span class="badge ${u.active===false?'':'br'}" style="${u.active===false?'background:rgba(100,116,139,.1);color:var(--muted)':''}">
+            ${u.active===false?'Inactivo':'Activo'}</span></td>
+          <td><div style="display:flex;gap:6px">
+            <button class="btn bo btn-sm" onclick="openUser('${u.id}')">✏️ Editar</button>
+            <button class="btn bo btn-sm" onclick="showHist('${u.id}')">📋 Actividad</button>
+            ${u.id!==CU.id?`<button class="btn btn-sm ${u.active===false?'bs':'bw'}" onclick="togUser('${u.id}')">
+              ${u.active===false?'Activar':'Desactivar'}</button>`:''}
+          </div></td>
+        </tr>`).join('')}</tbody>
+      </table>
     </div>
   </div>`;
 }
-
-function calcCierre(){
-  const ini = parseFloat(document.getElementById('ci-ini').value)||0;
-  const fis = parseFloat(document.getElementById('ci-fis').value)||0;
-  const sd = LS.obj('bar_sd',{total:0,cash:0,card:0,transfer:0,date:today(),initCash:0});
-  
-  const esp = ini + sd.cash;
-  const dif = fis - esp;
-  const res = document.getElementById('ci-res');
-  
-  res.style.display='block';
-  if(dif === 0){
-    res.innerHTML=`<div class="chkbox ok"><h3>✅ Cuadre Exacto</h3><p>El efectivo físico coincide perfectamente con el sistema.</p></div>`;
-  } else if(dif > 0){
-    res.innerHTML=`<div class="chkbox over"><h3>⚠️ Sobrante</h3><p>Hay un sobrante de ${fc(dif)} en caja.</p></div>`;
-  } else {
-    res.innerHTML=`<div class="chkbox short"><h3>❌ Faltante</h3><p>Falta ${fc(Math.abs(dif))} en caja.</p></div>`;
+function openUser(uid){
+  document.getElementById('ue-id').value=uid||'';
+  if(uid){
+    const u=LS.get('bar_users').find(x=>x.id===uid);if(!u)return;
+    document.getElementById('mt-user').textContent='Editar Usuario';
+    document.getElementById('ue-name').value=u.name;
+    document.getElementById('ue-pass').value=u.password;
+    document.getElementById('ue-role').value=u.role;
+  }else{
+    document.getElementById('mt-user').textContent='Nuevo Usuario';
+    ['ue-name','ue-pass'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('ue-role').value='waiter';
   }
-  
-  cierreData = {ini, fis, esp, dif, sd};
-  document.getElementById('btn-corte').style.display = 'inline-block';
+  om('m-user');
+}
+function saveUser(){
+  const name=document.getElementById('ue-name').value.trim();
+  const pass=document.getElementById('ue-pass').value.trim();
+  const role=document.getElementById('ue-role').value;
+  const eid=document.getElementById('ue-id').value;
+  if(!name||!pass){notify('⚠️','Campos requeridos','Nombre y contraseña obligatorios.',3000);return}
+  const users=LS.get('bar_users');
+  if(eid){
+    const i=users.findIndex(u=>u.id===eid);
+    if(i!==-1){users[i]={...users[i],name,password:pass,role};logAct(CU.id,`Editó usuario "${name}"`);}
+  }else{
+    if(users.some(u=>u.name.toLowerCase()===name.toLowerCase())){notify('⚠️','Error','El nombre de usuario ya existe.',3000);return}
+    users.push({id:uid(),name,password:pass,role,active:true,createdAt:new Date().toISOString(),history:[]});
+    logAct(CU.id,`Creó usuario "${name}"`);
+  }
+  LS.set('bar_users',users);cm('m-user');
+  notify('✅',eid?'Usuario actualizado':'Usuario creado',name,3000);go('users');
+}
+function togUser(uid){
+  const users=LS.get('bar_users');const i=users.findIndex(u=>u.id===uid);if(i===-1||users[i].id===CU.id)return;
+  users[i].active=users[i].active===false?true:false;LS.set('bar_users',users);
+  logAct(CU.id,`${users[i].active?'Activó':'Desactivó'} usuario "${users[i].name}"`);go('users');
+}
+function showHist(uid){
+  const u=LS.get('bar_users').find(x=>x.id===uid);if(!u)return;
+  const hist=u.history||[];
+  document.getElementById('mt-hist').textContent=`Actividad: ${u.name}`;
+  document.getElementById('mb-hist').innerHTML=`<div class="scrl">
+    ${!hist.length?'<div class="empty"><p>Sin actividad reciente.</p></div>':
+    hist.slice(0,50).map(h=>`<div style="padding:12px;border-bottom:1px solid var(--border)">
+      <div style="font-size:13px;color:var(--text);margin-bottom:4px">${h.action}</div>
+      <div style="font-size:11px;color:var(--muted)">⏰ ${fd(h.timestamp)}</div>
+    </div>`).join('')}
+  </div>`;
+  om('m-hist');
 }
 
-function doCorte(){
-  if(!cierreData) return;
-  const cuts = LS.get('bar_cuts');
-  cuts.push({id:uid(), date:new Date().toISOString(), worker:CU.name, ...cierreData});
-  LS.set('bar_cuts',cuts);
-  LS.set('bar_sd',{total:0,cash:0,card:0,transfer:0,date:today(),initCash:0});
-  
-  cm('m-cierre');
-  go('corte');
-  notify('✅','Corte realizado','El corte de caja se guardó correctamente.',4000);
-  
-  // Limpiar valores del modal
-  document.getElementById('ci-res').style.display='none';
-  document.getElementById('btn-corte').style.display='none';
-  document.getElementById('ci-ini').value='';
-  document.getElementById('ci-fis').value='';
+// ═══════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════
+const ls_sess=LS.get('bar_session');
+if(ls_sess&&ls_sess.uid){
+  const u=LS.get('bar_users').find(x=>x.id===ls_sess.uid&&x.active!==false);
+  if(u){CU=u;startApp()}
 }
 </script>
 </body>
