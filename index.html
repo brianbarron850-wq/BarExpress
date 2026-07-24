@@ -176,7 +176,7 @@ tr:hover td{background:rgba(139,92,246,.04)}
 .cbox p{font-size:14px;color:var(--muted);margin-bottom:20px}
 .cacts{display:flex;gap:10px;justify-content:center}
 /* ── ORDERS ── */
-.order-layout{display:grid;grid-template-columns:1fr 380px;gap:20px;align-items:start;height:calc(100vh - 90px);overflow:hidden}
+.order-layout{display:grid;grid-template-columns:1fr 380px;gap:20px;align-items:start}
 .prod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:9px}
 .pb{background:rgba(255,255,255,.03);border:2px solid var(--border);border-radius:var(--rs);
   padding:13px 10px;text-align:center;cursor:pointer;transition:all .18s;font-family:inherit;color:var(--text)}
@@ -280,7 +280,7 @@ tr:hover td{background:rgba(139,92,246,.04)}
 .pflt{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;align-items:flex-end}
 .pflt .fc{max-width:220px}
 /* ── RESPONSIVE ── */
-@media(max-width:960px){.order-layout{grid-template-columns:1fr;height:auto;overflow:visible}.cslayout{grid-template-columns:1fr}.g3{grid-template-columns:1fr 1fr}.g4{grid-template-columns:1fr 1fr}}
+@media(max-width:960px){.order-layout{grid-template-columns:1fr}.cslayout{grid-template-columns:1fr}.g3{grid-template-columns:1fr 1fr}.g4{grid-template-columns:1fr 1fr}}
 @media(max-width:768px){.sb{transform:translateX(-100%)}.sb.open{transform:translateX(0)}.main{margin-left:0}.hbg{display:block}.content{padding:14px}.g2{grid-template-columns:1fr}.g3{grid-template-columns:1fr}.g4{grid-template-columns:1fr 1fr}.kgrid{grid-template-columns:1fr}.cmeths{grid-template-columns:1fr 1fr}}
 @media(max-width:480px){.g4{grid-template-columns:1fr}.cmeths{grid-template-columns:1fr}.modal{max-width:100%}.mov{align-items:flex-end;padding:0}.modal{border-radius:var(--r) var(--r) 0 0;max-height:95vh}}
 @media print{.sb,.topbar,.hbg,.btn,#notif-box{display:none!important}body{background:#fff}.ticket{border:none}}
@@ -713,35 +713,35 @@ function rOrders(c){
   }
   c.innerHTML=`${barHtml}
   <div class="order-layout">
-    <div style="display:flex;flex-direction:column;height:100%;overflow:hidden">
-      <div class="card" style="margin-bottom:16px;flex-shrink:0">
+    <div>
+      <div class="card" style="margin-bottom:16px">
         <div class="ch"><div class="ct">🍹 Nueva Comanda</div>
           ${editingOid?`<span style="font-size:12px;background:rgba(59,130,246,.2);color:#93C5FD;padding:4px 10px;border-radius:20px;font-weight:700">✏️ MODO EDICIÓN</span>`:''}
         </div>
         <div class="fg"><label class="fl">Mesa / Comanda *</label>
           <input type="text" class="fc" id="o-client" placeholder="Ej: Mesa 5, Barra 2, VIP..."/></div>
         <div class="fg"><label class="fl">Nota General</label>
-          <textarea class="fc" id="o-gnote" placeholder="Observaciones de la comanda..." rows="2" style="resize:none"></textarea></div>
+          <textarea class="fc" id="o-gnote" placeholder="Observaciones de la comanda..." rows="2"></textarea></div>
       </div>
-      <div class="card" style="flex:1;display:flex;flex-direction:column;overflow:hidden">
-        <div class="ch" style="flex-shrink:0"><div class="ct">📦 Carta de Productos</div></div>
-        <div class="chip-row" id="cat-chips" style="flex-shrink:0">
+      <div class="card">
+        <div class="ch"><div class="ct">📦 Carta de Productos</div></div>
+        <div class="chip-row" id="cat-chips">
           <button class="cchip ${orderCatFilter==='all'?'active':''}" onclick="filterCat('all',this)">Todas</button>
           ${cats.map(cat=>`<button class="cchip ${orderCatFilter===cat?'active':''}" onclick="filterCat('${cat}',this)">${cat}</button>`).join('')}
         </div>
-        <div class="prod-grid" id="pgrid" style="flex:1;overflow-y:auto;align-content:start;padding-right:5px">${buildProdGrid(prods,orderCatFilter)}</div>
+        <div class="prod-grid" id="pgrid">${buildProdGrid(prods,orderCatFilter)}</div>
       </div>
     </div>
-    <div style="display:flex;flex-direction:column;height:100%;overflow:hidden">
-      <div class="card" style="flex-shrink:0;display:flex;flex-direction:column;max-height:55%">
-        <div class="ch" style="flex-shrink:0"><div class="ct">🧾 Comanda</div><button class="btn bo btn-sm" onclick="clearCart()">🗑️ Limpiar</button></div>
-        <div id="cart-items" style="flex:1;overflow:hidden"></div>
-        <div class="ctrow" style="flex-shrink:0"><div style="font-size:13px;font-weight:700;color:var(--muted)">TOTAL</div><div class="ctamt" id="cart-tot">$0.00</div></div>
-        <div id="send-wrap" style="flex-shrink:0"></div>
+    <div>
+      <div class="card" style="position:sticky;top:80px">
+        <div class="ch"><div class="ct">🧾 Comanda</div><button class="btn bo btn-sm" onclick="clearCart()">🗑️ Limpiar</button></div>
+        <div id="cart-items"></div>
+        <div class="ctrow"><div style="font-size:13px;font-weight:700;color:var(--muted)">TOTAL</div><div class="ctamt" id="cart-tot">$0.00</div></div>
+        <div id="send-wrap"></div>
       </div>
-      <div class="card" style="margin-top:16px;flex:1;display:flex;flex-direction:column;overflow:hidden">
-        <div class="ch" style="flex-shrink:0"><div class="ct">Mis Comandas Activas</div></div>
-        <div id="my-orders" style="flex:1;overflow:hidden">${buildMyOrders()}</div>
+      <div class="card" style="margin-top:16px">
+        <div class="ch"><div class="ct">Mis Comandas Activas</div></div>
+        <div id="my-orders">${buildMyOrders()}</div>
       </div>
     </div>
   </div>`;
@@ -1319,3 +1319,188 @@ function rCorte(c){
   </div>
   <div class="card">
     <div class="ch"><div class="ct">📋 Historial de Cortes</div>
+      ${cuts.length?`<div style="display:flex;gap:8px">
+        <button class="btn bo btn-sm" onclick="printCuts('day')">📄 PDF Hoy</button>
+        <button class="btn bo btn-sm" onclick="printCuts('all')">📄 PDF Historial</button>
+      </div>`:''}
+    </div>
+    ${!cuts.length?'<div class="empty"><div class="ei">📊</div><p>Sin cortes registrados aún.</p></div>':
+    `<div class="tw"><table>
+      <thead><tr><th>Fecha</th><th>Cajero</th><th>C. Inicial</th><th>Ventas</th><th>Efectivo</th><th>Tarjeta</th><th>Transfer.</th><th>Esperado</th><th>Físico</th><th>Diferencia</th></tr></thead>
+      <tbody>${cuts.slice().reverse().map(ct=>`<tr>
+        <td>${fds(ct.timestamp)}</td><td>${ct.workerName}</td>
+        <td>${fc(ct.initCash)}</td><td>${fc(ct.salesTotal)}</td>
+        <td>${fc(ct.cash)}</td><td>${fc(ct.card)}</td><td>${fc(ct.transfer)}</td>
+        <td>${fc(ct.expectedCash)}</td><td>${fc(ct.physicalCash)}</td>
+        <td style="color:${ct.diff===0?'var(--ok)':ct.diff>0?'var(--warn)':'var(--err)'}">
+          <strong>${ct.diff>0?'+':''}${fc(ct.diff)}</strong>
+          <span style="font-size:11px"> ${ct.diff===0?'✅ Cuadra':ct.diff>0?'⬆️ Sobra':'⬇️ Falta'}</span>
+        </td></tr>`).join('')}</tbody>
+    </table></div>`}
+  </div>`;
+}
+function buildSaleCard(ttl,s,color,sub,extra){
+  return`<div class="stat" style="border-top:4px solid ${color}">
+    <div class="stl">${ttl}</div>
+    <div class="stv">${fc(s.total)}</div>
+    <div class="sts">${sub}</div>
+    <div class="cmeths">
+      <div class="mcard mc"><div class="mamt">${fc(s.cash)}</div><div class="mlbl">💵 Efectivo</div></div>
+      <div class="mcard mk"><div class="mamt">${fc(s.card)}</div><div class="mlbl">💳 Tarjeta</div></div>
+      <div class="mcard mt"><div class="mamt">${fc(s.transfer)}</div><div class="mlbl">📱 Transfer.</div></div>
+    </div>
+    ${extra}
+  </div>`;
+}
+function openCierre(){
+  const sd=LS.obj('bar_sd',{});
+  document.getElementById('ci-ini').value=sd.initCash||'';
+  document.getElementById('ci-fis').value='';
+  document.getElementById('ci-res').style.display='none';
+  document.getElementById('btn-corte').style.display='none';
+  cierreData=null;om('m-cierre');
+}
+function calcCierre(){
+  const ini=parseFloat(document.getElementById('ci-ini').value)||0;
+  const fis=parseFloat(document.getElementById('ci-fis').value);
+  if(isNaN(fis)){notify('⚠️','Ingresa el monto','Por favor ingresa el efectivo físico contado.',3000);return}
+  const sd=LS.obj('bar_sd',{cash:0});
+  const cashSales=sd.cash||0;const expected=ini+cashSales;const diff=fis-expected;
+  cierreData={ini,fis,expected,diff,cashSales};
+  const cls=diff===0?'ok':diff>0?'over':'short';
+  const msg=diff===0?'✅ La caja cuadra perfectamente.':diff>0?`⬆️ Sobran ${fc(Math.abs(diff))}`:(`⬇️ Faltan ${fc(Math.abs(diff))}`);
+  const resEl=document.getElementById('ci-res');
+  resEl.innerHTML=`<div class="chkbox ${cls}">
+    <div class="prow"><span>Caja Inicial:</span><strong>${fc(ini)}</strong></div>
+    <div class="prow"><span>Ventas en Efectivo:</span><strong>${fc(cashSales)}</strong></div>
+    <div class="prow" style="border-top:1px solid var(--border);margin-top:4px;padding-top:8px">
+      <span>Efectivo Esperado:</span><strong>${fc(expected)}</strong></div>
+    <div class="prow"><span>Efectivo Físico:</span><strong>${fc(fis)}</strong></div>
+    <div class="prow" style="font-size:16px;font-weight:900;border-top:2px solid var(--border);margin-top:6px;padding-top:10px">
+      <span>Diferencia:</span>
+      <span style="color:${cls==='ok'?'var(--ok)':cls==='over'?'var(--warn)':'var(--err)'}">
+        ${diff>0?'+':''}${fc(diff)}</span></div>
+    <div style="margin-top:6px;font-weight:700;color:var(--text)">${msg}</div>
+  </div>`;
+  resEl.style.display='block';document.getElementById('btn-corte').style.display='';
+}
+function doCorte(){
+  if(!cierreData)return;
+  const sd=LS.obj('bar_sd',{total:0,cash:0,card:0,transfer:0});
+  const cut={id:uid(),timestamp:new Date().toISOString(),workerName:CU.name,workerId:CU.id,
+    initCash:cierreData.ini,salesTotal:sd.total,cash:sd.cash,card:sd.card,transfer:sd.transfer,
+    expectedCash:cierreData.expected,physicalCash:cierreData.fis,diff:cierreData.diff};
+  const cuts=LS.get('bar_cuts');cuts.push(cut);LS.set('bar_cuts',cuts);
+  LS.set('bar_sd',{total:0,cash:0,card:0,transfer:0,date:today(),initCash:cierreData.fis});
+  logAct(CU.id,`Realizó corte de caja. Dif: ${fc(cierreData.diff)}`);
+  cm('m-cierre');notify('✅','Corte realizado','Caja reiniciada para el nuevo turno.',4000);go('corte');
+}
+function resetSales(k,lbl){
+  confirm2(`¿Reiniciar ventas de ${lbl}?`,`Los totales se volverán cero. El historial no se afecta.`,()=>{
+    if(k==='bar_sw')LS.set(k,{total:0,cash:0,card:0,transfer:0,weekStart:weekStart()});
+    else LS.set(k,{total:0,cash:0,card:0,transfer:0,monthStart:monthStart()});
+    logAct(CU.id,`Reinició estadísticas de ${lbl}`);notify('✅','Ventas reiniciadas','',3000);go('corte');
+  });
+}
+function printCuts(type){
+  const cuts=LS.get('bar_cuts');
+  const d=type==='day'?cuts.filter(c=>c.timestamp.startsWith(today())):cuts;
+  const w=window.open('','_blank');
+  w.document.write(`<html><head><title>Cortes</title><style>body{font-family:sans-serif;font-size:12px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ccc;padding:6px;text-align:left}</style></head>
+  <body><h2>Reporte de Cortes ${type==='day'?'(Hoy)':'(Histórico)'}</h2>
+  <table><tr><th>Fecha</th><th>Cajero</th><th>Inicial</th><th>Ventas</th><th>Esperado</th><th>Físico</th><th>Diferencia</th></tr>
+  ${d.map(c=>`<tr><td>${fds(c.timestamp)}</td><td>${c.workerName}</td><td>${fc(c.initCash)}</td><td>${fc(c.salesTotal)}</td><td>${fc(c.expectedCash)}</td><td>${fc(c.physicalCash)}</td><td>${fc(c.diff)}</td></tr>`).join('')}
+  </table><script>window.print();window.close()}<\/script></body></html>`);
+}
+
+// ═══════════════════════════════════════════
+// USUARIOS (USERS)
+// ═══════════════════════════════════════════
+function rUsers(c){
+  const users=LS.get('bar_users');
+  c.innerHTML=`<div class="card">
+    <div class="ch"><div class="ct">👥 Usuarios del Sistema</div>
+      <button class="btn bp" onclick="openUser()">+ Nuevo Usuario</button></div>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Usuario</th><th>Rol</th><th>Creado</th><th>Estado</th><th>Acciones</th></tr></thead>
+        <tbody>${users.map(u=>`<tr>
+          <td><strong style="color:var(--text)">${u.name}</strong></td>
+          <td><span class="badge b-${u.role}">${ROLES[u.role]||u.role}</span></td>
+          <td><span style="font-size:12px;color:var(--muted)">${fds(u.createdAt)}</span></td>
+          <td><span class="badge ${u.active===false?'':'br'}" style="${u.active===false?'background:rgba(100,116,139,.1);color:var(--muted)':''}">
+            ${u.active===false?'Inactivo':'Activo'}</span></td>
+          <td><div style="display:flex;gap:6px">
+            <button class="btn bo btn-sm" onclick="openUser('${u.id}')">✏️ Editar</button>
+            <button class="btn bo btn-sm" onclick="showHist('${u.id}')">📋 Actividad</button>
+            ${u.id!==CU.id?`<button class="btn btn-sm ${u.active===false?'bs':'bw'}" onclick="togUser('${u.id}')">
+              ${u.active===false?'Activar':'Desactivar'}</button>`:''}
+          </div></td>
+        </tr>`).join('')}</tbody>
+      </table>
+    </div>
+  </div>`;
+}
+function openUser(uid){
+  document.getElementById('ue-id').value=uid||'';
+  if(uid){
+    const u=LS.get('bar_users').find(x=>x.id===uid);if(!u)return;
+    document.getElementById('mt-user').textContent='Editar Usuario';
+    document.getElementById('ue-name').value=u.name;
+    document.getElementById('ue-pass').value=u.password;
+    document.getElementById('ue-role').value=u.role;
+  }else{
+    document.getElementById('mt-user').textContent='Nuevo Usuario';
+    ['ue-name','ue-pass'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('ue-role').value='waiter';
+  }
+  om('m-user');
+}
+function saveUser(){
+  const name=document.getElementById('ue-name').value.trim();
+  const pass=document.getElementById('ue-pass').value.trim();
+  const role=document.getElementById('ue-role').value;
+  const eid=document.getElementById('ue-id').value;
+  if(!name||!pass){notify('⚠️','Campos requeridos','Nombre y contraseña obligatorios.',3000);return}
+  const users=LS.get('bar_users');
+  if(eid){
+    const i=users.findIndex(u=>u.id===eid);
+    if(i!==-1){users[i]={...users[i],name,password:pass,role};logAct(CU.id,`Editó usuario "${name}"`);}
+  }else{
+    if(users.some(u=>u.name.toLowerCase()===name.toLowerCase())){notify('⚠️','Error','El nombre de usuario ya existe.',3000);return}
+    users.push({id:uid(),name,password:pass,role,active:true,createdAt:new Date().toISOString(),history:[]});
+    logAct(CU.id,`Creó usuario "${name}"`);
+  }
+  LS.set('bar_users',users);cm('m-user');
+  notify('✅',eid?'Usuario actualizado':'Usuario creado',name,3000);go('users');
+}
+function togUser(uid){
+  const users=LS.get('bar_users');const i=users.findIndex(u=>u.id===uid);if(i===-1||users[i].id===CU.id)return;
+  users[i].active=users[i].active===false?true:false;LS.set('bar_users',users);
+  logAct(CU.id,`${users[i].active?'Activó':'Desactivó'} usuario "${users[i].name}"`);go('users');
+}
+function showHist(uid){
+  const u=LS.get('bar_users').find(x=>x.id===uid);if(!u)return;
+  const hist=u.history||[];
+  document.getElementById('mt-hist').textContent=`Actividad: ${u.name}`;
+  document.getElementById('mb-hist').innerHTML=`<div class="scrl">
+    ${!hist.length?'<div class="empty"><p>Sin actividad reciente.</p></div>':
+    hist.slice(0,50).map(h=>`<div style="padding:12px;border-bottom:1px solid var(--border)">
+      <div style="font-size:13px;color:var(--text);margin-bottom:4px">${h.action}</div>
+      <div style="font-size:11px;color:var(--muted)">⏰ ${fd(h.timestamp)}</div>
+    </div>`).join('')}
+  </div>`;
+  om('m-hist');
+}
+
+// ═══════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════
+const ls_sess=LS.get('bar_session');
+if(ls_sess&&ls_sess.uid){
+  const u=LS.get('bar_users').find(x=>x.id===ls_sess.uid&&x.active!==false);
+  if(u){CU=u;startApp()}
+}
+</script>
+</body>
+</html>
