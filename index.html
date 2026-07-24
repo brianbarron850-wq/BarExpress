@@ -228,6 +228,7 @@ tr:hover td{background:rgba(139,92,246,.04)}
 .ocard[data-s="bar"]{border-left:4px solid var(--bar);box-shadow:0 0 20px rgba(139,92,246,.15)}
 .ocard[data-s="delivered"]{border-left:4px solid #0F766E;opacity:.7}
 .ocard[data-s="paid"]{border-left:4px solid #475569;opacity:.5}
+.ocard[data-s="cancelled"]{border-left:4px solid var(--err);opacity:.6}
 /* ── CASHIER ── */
 .cslayout{display:grid;grid-template-columns:1fr 400px;gap:20px;align-items:start}
 .cord{background:rgba(255,255,255,.03);border-radius:var(--rs);border:1px solid var(--border);
@@ -279,7 +280,7 @@ tr:hover td{background:rgba(139,92,246,.04)}
 .pflt{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;align-items:flex-end}
 .pflt .fc{max-width:220px}
 /* ── RESPONSIVE ── */
-@media(max-width:960px){.order-layout{grid-template-columns:1fr}.cslayout{grid-template-columns:1fr}.g3{grid-template-columns:1fr 1fr}.g4{grid-template-columns:1fr 1fr}}
+@media(max-width:960px){.order-layout{grid-template-columns:1fr}.cslayout{grid-template-columns:1fr}.g3{grid-template-columns:1fr 1fr}.g4{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:768px){.sb{transform:translateX(-100%)}.sb.open{transform:translateX(0)}.main{margin-left:0}.hbg{display:block}.content{padding:14px}.g2{grid-template-columns:1fr}.g3{grid-template-columns:1fr}.g4{grid-template-columns:1fr 1fr}.kgrid{grid-template-columns:1fr}.cmeths{grid-template-columns:1fr 1fr}}
 @media(max-width:480px){.g4{grid-template-columns:1fr}.cmeths{grid-template-columns:1fr}.modal{max-width:100%}.mov{align-items:flex-end;padding:0}.modal{border-radius:var(--r) var(--r) 0 0;max-height:95vh}}
 @media print{.sb,.topbar,.hbg,.btn,#notif-box{display:none!important}body{background:#fff}.ticket{border:none}}
@@ -445,6 +446,18 @@ tr:hover td{background:rgba(139,92,246,.04)}
     </div>
   </div>
 </div>
+<!-- MODAL CANCELAR -->
+<div class="mov" id="m-cancel">
+  <div class="modal" style="max-width:400px">
+    <div class="mh"><div class="mt">🚫 Cancelar Comanda</div><button class="mc" onclick="cm('m-cancel')">✕</button></div>
+    <div class="mb">
+      <input type="hidden" id="cx-oid"/>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:12px">Esta acción registrará la comanda como cancelada.</p>
+      <div class="fg"><label class="fl">Motivo de cancelación *</label><textarea class="fc" id="cx-reason" placeholder="Ej: El cliente se retiró, error de captura..." rows="3"></textarea></div>
+    </div>
+    <div class="mf"><button class="btn bo" onclick="cm('m-cancel')">Cerrar</button><button class="btn bd" onclick="confirmCancel()">Confirmar Cancelación</button></div>
+  </div>
+</div>
 <div id="notif-box"></div>
 
 <script>
@@ -473,8 +486,8 @@ const LS={
 // CONSTANTS
 // ═══════════════════════════════════════════
 const ROLES={admin:'Administrador',waiter:'Mesero',bartender:'Bartender',cashier:'Cajero'};
-const SL={pending:'En Espera','in-process':'Preparando',ready:'Listo',bar:'En Barra',delivered:'Entregado',paid:'Pagado'};
-const SB={pending:'bp_','in-process':'bip',ready:'br',bar:'bbar',delivered:'bdel',paid:'bpaid'};
+const SL={pending:'En Espera','in-process':'Preparando',ready:'Listo',bar:'En Barra',delivered:'Entregado',paid:'Pagado',cancelled:'Cancelado'};
+const SB={pending:'bp_','in-process':'bip',ready:'br',bar:'bbar',delivered:'bdel',paid:'bpaid',cancelled:'b-admin'};
 const VIEW_T={orders:'🍹 Comandas',kitchen:'🍸 Barra',cashier:'🏧 Caja',products:'🍺 Bebidas',corte:'📊 Corte',users:'👥 Usuarios'};
 
 // ═══════════════════════════════════════════
@@ -660,6 +673,46 @@ function notify(ico,title,msg,dur=4000,cls=''){
 }
 
 // ═══════════════════════════════════════════
+// CANCELACIONES
+// ═══════════════════════════════════════════
+function promptCancel(oid){
+  document.getElementById('cx-oid').value = oid;
+  document.getElementById('cx-reason').value = '';
+  om('m-cancel');
+}
+
+function confirmCancel(){
+  const oid = document.getElementById('cx-oid').value;
+  const reason = document.getElementById('cx-reason').value.trim();
+  if(!reason){ notify('⚠️','Requerido','Ingresa el motivo de cancelación.',3000); return; }
+  
+  const orders = LS.get('bar_orders');
+  const i = orders.findIndex(o=>o.id===oid);
+  if(i===-1) return;
+  
+  orders[i].status = 'cancelled';
+  orders[i].cancelReason = reason;
+  orders[i].cancelledAt = new Date().toISOString();
+  orders[i].cancelledBy = CU.name;
+  
+  LS.set('bar_orders', orders);
+  logAct(CU.id, `Canceló comanda #${orders[i].number} - Motivo: ${reason}`);
+  notify('✅','Cancelada',`Comanda #${orders[i].number} cancelada exitosamente.`,3000);
+  cm('m-cancel');
+  
+  if(CV==='orders'){
+    const mo = document.getElementById('my-orders');
+    if(mo) mo.innerHTML = buildMyOrders();
+  } else if (CV==='cashier') {
+    selOrder = null;
+    go('cashier');
+  } else {
+    go(CV);
+  }
+  updBadges();
+}
+
+// ═══════════════════════════════════════════
 // COMANDAS (ORDERS)
 // ═══════════════════════════════════════════
 let orderCatFilter='all';
@@ -788,7 +841,7 @@ function resetSendBtn(){
 }
 function buildMyOrders(){
   const orders=LS.get('bar_orders');
-  const mine=orders.filter(o=>o.workerId===CU.id&&!['paid'].includes(o.status)).sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));
+  const mine=orders.filter(o=>o.workerId===CU.id&&!['paid','cancelled'].includes(o.status)).sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));
   if(!mine.length)return'<div class="empty" style="padding:16px 0"><p>Sin comandas activas</p></div>';
   return mine.map(o=>`
     <div class="cord" style="cursor:default;${o.wasUpdated?'border-color:rgba(245,158,11,.4)':''}">
@@ -799,6 +852,7 @@ function buildMyOrders(){
       <div style="font-size:12px;color:var(--muted)">${o.items.length} bebida(s) · ${fc(o.total)}</div>
       ${['pending','in-process'].includes(o.status)?`<div style="margin-top:8px;display:flex;gap:6px">
         <button class="btn bi btn-sm" onclick="editOrder('${o.id}')">✏️ Editar</button>
+        <button class="btn bo btn-sm" onclick="promptCancel('${o.id}')">🚫 Cancelar</button>
         ${o.wasUpdated?`<span style="font-size:11px;background:rgba(245,158,11,.15);color:#FCD34D;border:1px solid rgba(245,158,11,.3);border-radius:4px;padding:3px 8px;font-weight:700;align-self:center">⚠️ Actualizado</span>`:''}
       </div>`:''}
       ${o.status==='bar'?`<div style="margin-top:8px"><button class="btn bcyan btn-sm" onclick="markDel('${o.id}')">🍹 Marcar Entregado</button></div>`:''}
@@ -853,7 +907,7 @@ function sendOrder(){
 function editOrder(oid){
   const orders=LS.get('bar_orders');
   const o=orders.find(x=>x.id===oid);if(!o)return;
-  if(['paid','delivered'].includes(o.status)){notify('⚠️','No editable','Esta comanda ya no puede modificarse.',3000);return}
+  if(['paid','delivered','cancelled'].includes(o.status)){notify('⚠️','No editable','Esta comanda ya no puede modificarse.',3000);return}
   editingOid=oid;
   cart=o.items.map(i=>({...i}));
   go('orders');
@@ -886,10 +940,10 @@ function rKitchen(c){
   const all=LS.get('bar_orders');
   let filtered=kFilter==='all'?all:kFilter==='active'?all.filter(o=>!['paid','cancelled'].includes(o.status)):all.filter(o=>o.status===kFilter);
   const sorted=[...filtered].sort((a,b)=>{
-    const s={pending:0,'in-process':1,ready:2,bar:3,delivered:4,paid:5};
+    const s={pending:0,'in-process':1,ready:2,bar:3,delivered:4,paid:5,cancelled:6};
     return((s[a.status]||9)-(s[b.status]||9))||new Date(a.timestamp)-new Date(b.timestamp);
   });
-  const cnt={pending:all.filter(o=>o.status==='pending').length,'in-process':all.filter(o=>o.status==='in-process').length,ready:all.filter(o=>o.status==='ready').length,bar:all.filter(o=>o.status==='bar').length};
+  const cnt={pending:all.filter(o=>o.status==='pending').length,'in-process':all.filter(o=>o.status==='in-process').length,ready:all.filter(o=>o.status==='ready').length,bar:all.filter(o=>o.status==='bar').length,cancelled:all.filter(o=>o.status==='cancelled').length};
   c.innerHTML=`
   <div class="fpills">
     <button class="fpill ${kFilter==='active'?'active':''}" onclick="kFilter='active';go('kitchen')">🔥 Activas (${cnt.pending+cnt['in-process']+cnt.ready+cnt.bar})</button>
@@ -898,6 +952,7 @@ function rKitchen(c){
     <button class="fpill ${kFilter==='ready'?'active':''}" onclick="kFilter='ready';go('kitchen')">✅ Listos (${cnt.ready})</button>
     <button class="fpill ${kFilter==='bar'?'active':''}" onclick="kFilter='bar';go('kitchen')">🍹 En Barra (${cnt.bar})</button>
     <button class="fpill ${kFilter==='all'?'active':''}" onclick="kFilter='all';go('kitchen')">📋 Todas</button>
+    <button class="fpill ${kFilter==='cancelled'?'active':''}" onclick="kFilter='cancelled';go('kitchen')">🚫 Canceladas (${cnt.cancelled})</button>
   </div>
   ${!sorted.length?'<div class="card"><div class="empty"><div class="ei">🍸</div><h3>Sin comandas</h3><p>No hay comandas en esta categoría.</p></div></div>':
   `<div class="kgrid">${sorted.map(o=>buildKCard(o)).join('')}</div>`}`;
@@ -918,6 +973,7 @@ function buildKCard(o){
     </div>
     <div class="ocb">
       ${o.wasUpdated?`<div style="background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.3);border-radius:6px;padding:7px 10px;margin-bottom:10px;font-size:12px;font-weight:700;color:#FCD34D;animation:pulse 1.5s infinite">⚠️ COMANDA ACTUALIZADA — Revisa los cambios antes de preparar</div>`:''}
+      ${o.status==='cancelled'?`<div style="background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);border-radius:6px;padding:7px 10px;margin-bottom:10px;font-size:12px;color:#FCA5A5;"><strong>Motivo de cancelación:</strong> ${o.cancelReason||'Sin motivo'}<br><span style="font-size:10px;opacity:0.8">Cancelado por: ${o.cancelledBy||'Desconocido'}</span></div>`:''}
       <ul class="oitems">
         ${o.items.map(i=>`<li><span class="oq">${i.qty}×</span> ${i.name}${i.note?`<div class="inotice">📝 ${i.note}</div>`:''}</li>`).join('')}
       </ul>
@@ -926,8 +982,8 @@ function buildKCard(o){
     </div>
     <div class="ocf"><div class="sbts">
       ${btns[o.status]||''}
-      ${!['pending','paid','delivered'].includes(o.status)?`<button class="btn bo btn-sm" onclick="updStatus('${o.id}','pending')">⏪ Regresar</button>`:''}
-      ${['delivered','paid'].includes(o.status)?`<span style="font-size:12px;color:var(--muted)">Comanda completada</span>`:''}
+      ${!['pending','paid','delivered','cancelled'].includes(o.status)?`<button class="btn bo btn-sm" onclick="updStatus('${o.id}','pending')">⏪ Regresar</button>`:''}
+      ${['delivered','paid','cancelled'].includes(o.status)?`<span style="font-size:12px;color:var(--muted)">Comanda ${SL[o.status].toLowerCase()}</span>`:''}
       ${o.wasUpdated?`<button class="btn bw btn-xs" onclick="ackUpd('${o.id}')">👁️ Visto</button>`:''}
     </div></div>
   </div>`;
@@ -989,7 +1045,10 @@ function buildPayPanel(){
     <div class="ch">
       <div><div class="ct">#${o.number} – ${o.clientName}</div>
       <div style="font-size:12px;color:var(--muted);margin-top:3px"><span class="badge ${SB[o.status]}">${SL[o.status]}</span> · 👤 ${o.workerName}</div></div>
-      <button class="btn bo btn-sm" onclick="selOrder=null;go('cashier')">✕</button>
+      <div style="display:flex;gap:6px">
+        <button class="btn bd btn-sm" onclick="promptCancel('${o.id}')" title="Cancelar Comanda">🚫</button>
+        <button class="btn bo btn-sm" onclick="selOrder=null;go('cashier')">✕</button>
+      </div>
     </div>
     <div style="margin-bottom:14px">
       ${o.items.map(i=>`<div style="display:flex;justify-content:space-between;font-size:13px;padding:3px 0;color:var(--text)">
@@ -1226,42 +1285,57 @@ function delUser(id){ confirm2('¿Eliminar usuario?','No podrá iniciar sesión.
 // CORTE DE CAJA (CORTE) COMPLETADO
 // ═══════════════════════════════════════════
 function rCorte(c){
-  const sd=LS.obj('bar_sd',{total:0,cash:0,card:0,transfer:0,date:today()});
-  c.innerHTML=`<div class="card"><div class="ch"><div class="ct">📊 Corte de Caja</div></div>
-  <div class="g4">
-    <div class="stat"><div class="stl">Ventas Totales</div><div class="stv">${fc(sd.total)}</div></div>
-    <div class="stat"><div class="stl">Efectivo</div><div class="stv" style="color:var(--ok)">${fc(sd.cash)}</div></div>
-    <div class="stat"><div class="stl">Tarjeta</div><div class="stv" style="color:var(--info)">${fc(sd.card)}</div></div>
-    <div class="stat"><div class="stl">Transferencia</div><div class="stv" style="color:var(--bar)">${fc(sd.transfer)}</div></div>
-  </div>
-  <div style="margin-top:20px"><button class="btn bp" onclick="om('m-cierre')">🔒 Realizar Cierre y Corte</button></div>
+  const sd = LS.obj('bar_sd',{total:0,cash:0,card:0,transfer:0,date:today(),initCash:0});
+  c.innerHTML=`<div class="card">
+    <div class="ch"><div class="ct">📊 Corte de Caja</div><button class="btn bp" onclick="om('m-cierre')">🔒 Realizar Cierre</button></div>
+    <div class="g4">
+      <div class="stat"><div class="stl">Ventas del Día</div><div class="stv">${fc(sd.total)}</div></div>
+      <div class="stat"><div class="stl">Efectivo</div><div class="stv" style="color:var(--ok)">${fc(sd.cash)}</div></div>
+      <div class="stat"><div class="stl">Tarjeta</div><div class="stv" style="color:var(--info)">${fc(sd.card)}</div></div>
+      <div class="stat"><div class="stl">Transferencia</div><div class="stv" style="color:var(--bar2)">${fc(sd.transfer)}</div></div>
+    </div>
   </div>`;
 }
+
 function calcCierre(){
-  const ini=parseFloat(document.getElementById('ci-ini').value)||0;
-  const fis=parseFloat(document.getElementById('ci-fis').value)||0;
-  const sd=LS.obj('bar_sd',{cash:0});
-  const esp=ini+sd.cash;
-  const dif=fis-esp;
-  const res=document.getElementById('ci-res');
+  const ini = parseFloat(document.getElementById('ci-ini').value)||0;
+  const fis = parseFloat(document.getElementById('ci-fis').value)||0;
+  const sd = LS.obj('bar_sd',{total:0,cash:0,card:0,transfer:0,date:today(),initCash:0});
+  
+  const esp = ini + sd.cash;
+  const dif = fis - esp;
+  const res = document.getElementById('ci-res');
+  
   res.style.display='block';
-  let html=`<div class="prow"><span>Efectivo Esperado:</span><span>${fc(esp)}</span></div><div class="prow"><span>Efectivo Físico:</span><span>${fc(fis)}</span></div>`;
-  if(dif===0) html+=`<div class="prow total" style="color:var(--ok)">¡Cuadre Exacto!</div>`;
-  else if(dif>0) html+=`<div class="prow total" style="color:var(--warn)">Sobrante: +${fc(dif)}</div>`;
-  else html+=`<div class="prow total" style="color:var(--err)">Faltante: ${fc(dif)}</div>`;
-  res.innerHTML=html;
-  document.getElementById('btn-corte').style.display='inline-flex';
-  cierreData={ini,fis,esp,dif};
-}
-function doCorte(){
-  logAct(CU.id,`Realizó corte de caja. Esperado: ${fc(cierreData.esp)}, Físico: ${fc(cierreData.fis)}`);
-  LS.set('bar_sd',{total:0,cash:0,card:0,transfer:0,date:today()});
-  cm('m-cierre'); go('corte'); notify('✅','Corte Realizado','El corte se guardó correctamente.',4000);
-  document.getElementById('ci-res').style.display='none';
-  document.getElementById('btn-corte').style.display='none';
-  document.getElementById('ci-ini').value=''; document.getElementById('ci-fis').value='';
+  if(dif === 0){
+    res.innerHTML=`<div class="chkbox ok"><h3>✅ Cuadre Exacto</h3><p>El efectivo físico coincide perfectamente con el sistema.</p></div>`;
+  } else if(dif > 0){
+    res.innerHTML=`<div class="chkbox over"><h3>⚠️ Sobrante</h3><p>Hay un sobrante de ${fc(dif)} en caja.</p></div>`;
+  } else {
+    res.innerHTML=`<div class="chkbox short"><h3>❌ Faltante</h3><p>Falta ${fc(Math.abs(dif))} en caja.</p></div>`;
+  }
+  
+  cierreData = {ini, fis, esp, dif, sd};
+  document.getElementById('btn-corte').style.display = 'inline-block';
 }
 
+function doCorte(){
+  if(!cierreData) return;
+  const cuts = LS.get('bar_cuts');
+  cuts.push({id:uid(), date:new Date().toISOString(), worker:CU.name, ...cierreData});
+  LS.set('bar_cuts',cuts);
+  LS.set('bar_sd',{total:0,cash:0,card:0,transfer:0,date:today(),initCash:0});
+  
+  cm('m-cierre');
+  go('corte');
+  notify('✅','Corte realizado','El corte de caja se guardó correctamente.',4000);
+  
+  // Limpiar valores del modal
+  document.getElementById('ci-res').style.display='none';
+  document.getElementById('btn-corte').style.display='none';
+  document.getElementById('ci-ini').value='';
+  document.getElementById('ci-fis').value='';
+}
 </script>
 </body>
 </html>
